@@ -1,0 +1,47 @@
+/* Design tokens — palette, type scale, spacing. See docs/ui-notes.md for source values. */
+
+:root {
+  /* Colour */
+  --color-bg: #111110;
+  --color-surface: #1a1a18;
+  --color-surface-raised: #2c2c2a;
+  --color-border: #3a3835;
+  --color-text: #f0efe8;
+  --color-text-muted: #888780;
+
+  /* Thermal scale for the heatmap — cold matches --color-surface-raised so
+     untrained muscles read as "just part of the UI" rather than an alert
+     colour. warm/hot/max are amber -> orange -> red, applied by heat.js's
+     tier() via the .heat-* classes in styles.css. */
+  --color-heat-cold: #2c2c2a;
+  --color-heat-warm: #BA7517;
+  --color-heat-hot: #EF9F27;
+  --color-heat-max: #E24B4A;
+
+  /* Accent doubles as the "hot" thermal colour and the primary CTA colour —
+     one colour doing both jobs keeps the palette tight. accent-text is the
+     text colour used *on top of* an accent-filled background (buttons,
+     active pills), not accent's own text colour. */
+  --color-accent: #EF9F27;
+  --color-accent-text: #111110;
+  --color-accent-shadow: rgba(239, 159, 39, 0.45); /* accent's own rgb, for button drop-shadows */
+  --color-accent-ring: rgba(239, 159, 39, 0.25); /* softer — sharp-edged focus rings need less opacity than a blurred shadow to read as subtle */
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+
+  /* Type */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+  --font-size-label: 0.75rem;   /* 12px — meta/labels */
+  --font-size-body: 0.875rem;   /* 14px — body text */
+  --font-size-heading: 1.125rem;/* 18px — screen titles */
+  --font-size-value: 1.25rem;   /* 20px — callout values, emphasis numbers */
+
+  --font-weight-heading: 500;
+  --font-weight-body: 400;
+}

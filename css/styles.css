@@ -1,0 +1,561 @@
+/* Layout, components, nav. Design tokens live in tokens.css. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+button, input {
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent; /* our own hover/active states replace the mobile tap-flash */
+}
+
+button {
+  appearance: none; /* strip native button chrome — every button here is styled explicitly by class */
+  transition: background-color 150ms ease, border-color 150ms ease,
+    color 150ms ease, transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+}
+
+/* Keyboard-only focus ring — :focus-visible skips it for mouse/touch clicks
+   (which already get their own hover/active feedback) but keeps it for tab
+   navigation, so it's an accessibility win with no visual cost normally. */
+button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Screens */
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.screens {
+  padding-bottom: 80px; /* clears the fixed bottom nav */
+}
+
+/* Topbar — shared across screens */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topbar h1 {
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-heading);
+}
+
+.text-action {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  cursor: pointer;
+  font-size: var(--font-size-body);
+  padding: 0;
+}
+
+.text-action:hover,
+.text-action:active {
+  opacity: 0.75;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-value);
+  line-height: 1;
+  border-radius: 8px;
+  padding: var(--space-xs);
+}
+
+.icon-button:hover {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+}
+
+/* Toggle pill — Simple/Advanced, List/Calendar */
+
+.toggle-pill {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.toggle-option {
+  padding: var(--space-xs) var(--space-md);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+}
+
+.toggle-option:hover:not(.active) {
+  color: var(--color-text);
+  background-color: var(--color-surface-raised);
+}
+
+.toggle-option.active {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+/* Bottom navigation */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-sm);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+}
+
+.nav-item:hover:not(.active) {
+  color: var(--color-text);
+}
+
+.nav-item.active {
+  color: var(--color-accent);
+}
+
+/* Heatmap screen */
+
+.callouts {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+}
+
+.callout-card {
+  flex: 1;
+  background: var(--color-surface);
+  padding: var(--space-md);
+  border-radius: 12px;
+}
+
+.callout-label {
+  font-size: var(--font-size-label);
+  color: var(--color-text-muted);
+}
+
+.callout-value {
+  font-size: var(--font-size-value);
+  font-weight: var(--font-weight-heading);
+  margin: var(--space-xs) 0;
+}
+
+.callout-meta {
+  font-size: var(--font-size-label);
+  color: var(--color-text-muted);
+}
+
+.heatmap-area {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+}
+
+.body-view {
+  flex: 1;
+}
+
+/* The body-highlighter library (js/heatmap.js) manages its own SVG's
+   sizing (via the svgStyle option) and fills (via bodyColor/
+   highlightedColors, read from the --color-heat- tokens above) — no
+   muscle-region, heat tier, or body-decor classes needed here anymore. */
+
+.cta-primary {
+  display: block;
+  width: calc(100% - var(--space-lg) * 2);
+  margin: var(--space-md) var(--space-lg);
+  padding: var(--space-md);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border: none;
+  border-radius: 12px;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-heading);
+  cursor: pointer;
+  box-shadow: 0 2px 10px -2px var(--color-accent-shadow);
+}
+
+.cta-primary:hover {
+  filter: brightness(1.08);
+}
+
+.cta-primary:active {
+  filter: brightness(0.95);
+  transform: scale(0.98);
+}
+
+/* Exercise library screen */
+
+.section-block {
+  padding: var(--space-md);
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: var(--font-size-body);
+  outline: none;
+  margin-bottom: var(--space-sm);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.search-input:hover {
+  border-color: var(--color-text-muted);
+}
+
+.search-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+}
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.filter-pill {
+  padding: var(--space-xs) var(--space-md);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: var(--font-size-label);
+}
+
+.filter-pill:hover:not(.active) {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
+.filter-pill.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.exercise-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.exercise-list li {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 150ms ease;
+}
+
+.exercise-list li:hover {
+  background: var(--color-surface);
+}
+
+.exercise-name {
+  font-weight: var(--font-weight-heading);
+}
+
+.exercise-meta {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+}
+
+.empty-state {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--space-xl);
+}
+
+/* Log workout screen */
+
+.session-list {
+  list-style: none;
+  padding: var(--space-md);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.exercise-card {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: var(--space-md);
+}
+
+.exercise-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-sm);
+}
+
+.set-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.set-row {
+  display: flex;
+  gap: var(--space-md);
+  font-size: var(--font-size-label);
+  color: var(--color-text-muted);
+}
+
+.set-form {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.set-input {
+  /* width:0 + flex:1 + min-width:0 makes the three inputs share the row
+     equally regardless of their content/placeholder length — without
+     min-width:0, a flex item won't shrink past its content's natural width. */
+  width: 0;
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text);
+  font-size: var(--font-size-label);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.set-input:hover {
+  border-color: var(--color-text-muted);
+}
+
+.set-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+}
+
+.add-set-btn {
+  flex-shrink: 0;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border: none;
+  border-radius: 6px;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-heading);
+  cursor: pointer;
+}
+
+.add-set-btn:hover {
+  filter: brightness(1.08);
+}
+
+.add-set-btn:active {
+  filter: brightness(0.95);
+  transform: scale(0.97);
+}
+
+/* History screen */
+
+.history-view {
+  display: none;
+  padding: var(--space-md);
+}
+
+.history-view.active {
+  display: block;
+}
+
+.history-entry {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.history-date {
+  font-weight: var(--font-weight-heading);
+}
+
+.history-summary {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  margin-top: var(--space-xs);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.calendar-month-label {
+  font-weight: var(--font-weight-heading);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.calendar-dow {
+  font-size: var(--font-size-label);
+  color: var(--color-text-muted);
+  padding: var(--space-xs) 0;
+}
+
+.calendar-day {
+  padding: var(--space-xs);
+  border-radius: 6px;
+  font-size: var(--font-size-label);
+}
+
+.calendar-day.trained {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.calendar-day.today {
+  outline: 2px solid var(--color-accent);
+}
+
+/* Exercise detail sheet — a backdrop + a bottom-anchored panel that slides
+   up. Toggled purely via the .open class (see exercises.js openSheet/closeSheet). */
+
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 10; /* above the bottom nav (which has no explicit z-index, so sits at the default stack level) */
+}
+
+.sheet-overlay.open {
+  display: block;
+}
+
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border-radius: 20px 20px 0 0;
+  padding: var(--space-lg);
+  transform: translateY(100%); /* parked just off-screen below */
+  transition: transform 0.3s ease;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.sheet-overlay.open .sheet {
+  transform: translateY(0); /* slides up into view when the overlay gets .open */
+}
+
+.sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  margin: 0 auto var(--space-md);
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-md);
+}
+
+.sheet-title {
+  font-size: var(--font-size-heading);
+}
+
+.sheet-subtitle {
+  margin-top: var(--space-xs);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+}
+
+.muscle-role-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.muscle-role-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.muscle-role-tag {
+  font-size: var(--font-size-label);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

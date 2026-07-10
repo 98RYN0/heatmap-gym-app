@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heatmap — Gym Tracker</title>
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app">
+        <main class="screens">
+            <!-- 4 screens, one per bottom-nav tab. Only the one with .active
+                 shows at a time — switchTab() in app.js toggles it by
+                 matching data-target (nav button) to data-screen (section). -->
+
+            <section id="screen-heatmap" class="screen active" data-screen="heatmap">
+                <div class="topbar">
+                    <h1>Heatmap</h1>
+                </div>
+
+                <!-- Values start as "—" placeholders; heatmap.js fills them
+                     in once there's real workout data to compute from. -->
+                <div class="callouts">
+                    <div class="callout-card">
+                        <p class="callout-label">Needs work</p>
+                        <p class="callout-value">—</p>
+                        <p class="callout-meta">—</p>
+                    </div>
+                    <div class="callout-card">
+                        <p class="callout-label">Most trained</p>
+                        <p class="callout-value">—</p>
+                        <p class="callout-meta">—</p>
+                    </div>
+                </div>
+
+                <!-- Left empty here — heatmap.js hands these to the
+                     body-highlighter library (CDN import), which renders
+                     its own anatomical SVG into each container. -->
+                <div class="heatmap-area">
+                    <div class="body-view" data-view="front"></div>
+                    <div class="body-view" data-view="back"></div>
+                </div>
+
+                <button class="cta-primary" id="log-workout-cta">+ Log workout</button>
+            </section>
+
+            <section id="screen-log" class="screen" data-screen="log">
+                <div class="topbar">
+                    <h1>Log workout</h1>
+                    <button class="text-action" id="finish-session-btn">Finish</button>
+                </div>
+
+                <!-- Populated by log.js's renderSession() — one exercise-card per added exercise. -->
+                <ul class="session-list"></ul>
+
+                <button class="cta-primary" id="add-exercise-btn">+ Add exercise</button>
+            </section>
+
+            <section id="screen-exercises" class="screen" data-screen="exercises">
+                <div class="topbar">
+                    <h1>Exercises</h1>
+                </div>
+
+                <div class="section-block">
+                    <input class="search-input" type="search" placeholder="Search exercises…" />
+                    <!-- data-muscle values match exercise.muscleGroup exactly
+                         (see js/muscle-taxonomy.js) so exercises.js's filter
+                         is a direct equality check — "all" is the one special case. -->
+                    <div class="filter-pills">
+                        <button class="filter-pill active" data-muscle="all">All</button>
+                        <button class="filter-pill" data-muscle="Chest">Chest</button>
+                        <button class="filter-pill" data-muscle="Back">Back</button>
+                        <button class="filter-pill" data-muscle="Shoulders">Shoulders</button>
+                        <button class="filter-pill" data-muscle="Arms">Arms</button>
+                        <button class="filter-pill" data-muscle="Core">Core</button>
+                        <button class="filter-pill" data-muscle="Legs">Legs</button>
+                    </div>
+                </div>
+
+                <!-- Populated by exercises.js's renderExercises(). -->
+                <ul class="exercise-list"></ul>
+            </section>
+
+            <section id="screen-history" class="screen" data-screen="history">
+                <div class="topbar">
+                    <h1>History</h1>
+                    <div class="toggle-pill" data-toggle="history-view">
+                        <button class="toggle-option active" data-value="list">List</button>
+                        <button class="toggle-option" data-value="calendar">Calendar</button>
+                    </div>
+                </div>
+
+                <!-- Both views exist in the DOM at once; history.js toggles
+                     which has .active rather than swapping content in/out. -->
+                <div class="history-view active" data-view="list">
+                    <p class="empty-state">No workouts logged yet.</p>
+                </div>
+
+                <div class="history-view" data-view="calendar">
+                    <div class="calendar-header">
+                        <button class="icon-button" id="cal-prev">‹</button>
+                        <p class="calendar-month-label"></p>
+                        <button class="icon-button" id="cal-next">›</button>
+                    </div>
+                    <!-- Rebuilt every month navigation by history.js's renderCalendar(). -->
+                    <div class="calendar-grid"></div>
+                </div>
+            </section>
+
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-target="heatmap">Heatmap</button>
+            <button class="nav-item" data-target="log">Log</button>
+            <button class="nav-item" data-target="exercises">Exercises</button>
+            <button class="nav-item" data-target="history">History</button>
+        </nav>
+
+        <!-- Shared exercise-detail bottom sheet — one instance reused for
+             whichever exercise was last tapped in the library. Populated by
+             exercises.js's openSheet(); opened/closed via the .open class. -->
+        <div class="sheet-overlay" id="exercise-detail-sheet">
+            <div class="sheet-backdrop"></div>
+            <div class="sheet">
+                <div class="sheet-handle"></div>
+                <div class="sheet-header">
+                    <div>
+                        <h2 class="sheet-title"></h2>
+                        <p class="sheet-subtitle"></p>
+                    </div>
+                    <button class="sheet-close icon-button">✕</button>
+                </div>
+                <ul class="muscle-role-list"></ul>
+                <button class="cta-primary sheet-add-btn">Add to session</button>
+            </div>
+        </div>
+
+        <!-- Quick-log sheet — opened by tapping a heatmap region
+             (js/heatmap.js). Lists the top exercises for whichever muscle
+             in that region is most under-trained; tapping one adds it
+             straight to the session (same action as the exercise detail
+             sheet's "Add to session", no separate button needed here). -->
+        <div class="sheet-overlay" id="quick-log-sheet">
+            <div class="sheet-backdrop"></div>
+            <div class="sheet">
+                <div class="sheet-handle"></div>
+                <div class="sheet-header">
+                    <div>
+                        <h2 class="sheet-title"></h2>
+                        <p class="sheet-subtitle"></p>
+                    </div>
+                    <button class="sheet-close icon-button">✕</button>
+                </div>
+                <ul class="exercise-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- type="module" enables import/export across js/*.js — app.js is the
+         entry point and pulls in the rest. Needs the app served over
+         http://, not opened as a file:// URL (see README "Running it"). -->
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>

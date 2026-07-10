@@ -1,0 +1,1360 @@
+[
+  {
+    "id": "barbell-bench-press",
+    "name": "Barbell Bench Press",
+    "category": "push",
+    "equipment": ["barbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.55 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "incline-barbell-bench-press",
+    "name": "Incline Barbell Bench Press",
+    "category": "push",
+    "equipment": ["barbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.5 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.3 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "decline-barbell-bench-press",
+    "name": "Decline Barbell Bench Press",
+    "category": "push",
+    "equipment": ["barbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.65 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.25 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "dumbbell-bench-press",
+    "name": "Dumbbell Bench Press",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.55 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "incline-dumbbell-press",
+    "name": "Incline Dumbbell Press",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.5 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.3 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "decline-dumbbell-press",
+    "name": "Decline Dumbbell Press",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.65 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.25 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "dumbbell-flye",
+    "name": "Dumbbell Flye",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.85 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "incline-dumbbell-flye",
+    "name": "Incline Dumbbell Flye",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.8 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "cable-crossover",
+    "name": "Cable Crossover",
+    "category": "push",
+    "equipment": ["cable"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.85 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "low-to-high-cable-flye",
+    "name": "Low-to-High Cable Flye",
+    "category": "push",
+    "equipment": ["cable"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.8 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "pec-deck-machine",
+    "name": "Pec Deck Machine",
+    "category": "push",
+    "equipment": ["machine"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.9 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "chest-press-machine",
+    "name": "Chest Press Machine",
+    "category": "push",
+    "equipment": ["machine"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.6 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "push-up",
+    "name": "Push-Up",
+    "category": "push",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.5 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 },
+      { "muscle": "Rectus Abdominis", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "wide-grip-push-up",
+    "name": "Wide-Grip Push-Up",
+    "category": "push",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.6 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.25 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "diamond-push-up",
+    "name": "Diamond Push-Up",
+    "category": "push",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Triceps Brachii", "emphasis": 0.45 },
+      { "muscle": "Pectoralis Major", "emphasis": 0.4 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "chest-dip",
+    "name": "Chest Dip",
+    "category": "push",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.5 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.3 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "landmine-chest-press",
+    "name": "Landmine Chest Press",
+    "category": "push",
+    "equipment": ["barbell"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.55 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.25 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "smith-machine-bench-press",
+    "name": "Smith Machine Bench Press",
+    "category": "push",
+    "equipment": ["machine"],
+    "muscleGroup": "Chest",
+    "bias": [
+      { "muscle": "Pectoralis Major", "emphasis": 0.55 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "pull-up",
+    "name": "Pull-Up",
+    "category": "pull",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.55 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.2 },
+      { "muscle": "Rhomboids", "emphasis": 0.15 },
+      { "muscle": "Teres Major", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "chin-up",
+    "name": "Chin-Up",
+    "category": "pull",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.5 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.3 },
+      { "muscle": "Rhomboids", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "lat-pulldown",
+    "name": "Lat Pulldown",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.6 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.25 },
+      { "muscle": "Rhomboids", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "close-grip-lat-pulldown",
+    "name": "Close-Grip Lat Pulldown",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.55 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.3 },
+      { "muscle": "Teres Major", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "straight-arm-pulldown",
+    "name": "Straight-Arm Pulldown",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.85 },
+      { "muscle": "Rhomboids", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "barbell-bent-over-row",
+    "name": "Barbell Bent-Over Row",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.35 },
+      { "muscle": "Rhomboids", "emphasis": 0.3 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.2 },
+      { "muscle": "Erector Spinae", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "pendlay-row",
+    "name": "Pendlay Row",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Rhomboids", "emphasis": 0.35 },
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.35 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.15 },
+      { "muscle": "Erector Spinae", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "t-bar-row",
+    "name": "T-Bar Row",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Rhomboids", "emphasis": 0.35 },
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.35 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.15 },
+      { "muscle": "Trapezius", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "single-arm-dumbbell-row",
+    "name": "Single-Arm Dumbbell Row",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.45 },
+      { "muscle": "Rhomboids", "emphasis": 0.3 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "chest-supported-dumbbell-row",
+    "name": "Chest-Supported Dumbbell Row",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Rhomboids", "emphasis": 0.35 },
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.35 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.15 },
+      { "muscle": "Trapezius", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "seated-cable-row",
+    "name": "Seated Cable Row",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Rhomboids", "emphasis": 0.4 },
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.3 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.2 },
+      { "muscle": "Trapezius", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "machine-row",
+    "name": "Machine Row",
+    "category": "pull",
+    "equipment": ["machine"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Rhomboids", "emphasis": 0.4 },
+      { "muscle": "Latissimus Dorsi", "emphasis": 0.35 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "face-pull",
+    "name": "Face Pull",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Posterior Deltoid", "emphasis": 0.5 },
+      { "muscle": "Trapezius", "emphasis": 0.3 },
+      { "muscle": "Rhomboids", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "barbell-shrug",
+    "name": "Barbell Shrug",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Back",
+    "bias": [{ "muscle": "Trapezius", "emphasis": 1.0 }]
+  },
+  {
+    "id": "dumbbell-shrug",
+    "name": "Dumbbell Shrug",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Back",
+    "bias": [{ "muscle": "Trapezius", "emphasis": 1.0 }]
+  },
+  {
+    "id": "cable-shrug",
+    "name": "Cable Shrug",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Back",
+    "bias": [{ "muscle": "Trapezius", "emphasis": 1.0 }]
+  },
+  {
+    "id": "deadlift",
+    "name": "Deadlift",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Erector Spinae", "emphasis": 0.35 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.25 },
+      { "muscle": "Hamstrings", "emphasis": 0.25 },
+      { "muscle": "Trapezius", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "rack-pull",
+    "name": "Rack Pull",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Erector Spinae", "emphasis": 0.4 },
+      { "muscle": "Trapezius", "emphasis": 0.3 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.15 },
+      { "muscle": "Hamstrings", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "back-extension",
+    "name": "Back Extension",
+    "category": "pull",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Erector Spinae", "emphasis": 0.7 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.3 }
+    ]
+  },
+  {
+    "id": "good-morning",
+    "name": "Good Morning",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Back",
+    "bias": [
+      { "muscle": "Erector Spinae", "emphasis": 0.4 },
+      { "muscle": "Hamstrings", "emphasis": 0.35 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "barbell-overhead-press",
+    "name": "Barbell Overhead Press",
+    "category": "push",
+    "equipment": ["barbell"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Anterior Deltoid", "emphasis": 0.55 },
+      { "muscle": "Lateral Deltoid", "emphasis": 0.25 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "seated-dumbbell-shoulder-press",
+    "name": "Seated Dumbbell Shoulder Press",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Anterior Deltoid", "emphasis": 0.5 },
+      { "muscle": "Lateral Deltoid", "emphasis": 0.3 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "arnold-press",
+    "name": "Arnold Press",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Anterior Deltoid", "emphasis": 0.45 },
+      { "muscle": "Lateral Deltoid", "emphasis": 0.35 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "push-press",
+    "name": "Push Press",
+    "category": "push",
+    "equipment": ["barbell"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Anterior Deltoid", "emphasis": 0.5 },
+      { "muscle": "Lateral Deltoid", "emphasis": 0.3 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "machine-shoulder-press",
+    "name": "Machine Shoulder Press",
+    "category": "push",
+    "equipment": ["machine"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Anterior Deltoid", "emphasis": 0.5 },
+      { "muscle": "Lateral Deltoid", "emphasis": 0.3 },
+      { "muscle": "Triceps Brachii", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "dumbbell-lateral-raise",
+    "name": "Dumbbell Lateral Raise",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Lateral Deltoid", "emphasis": 0.9 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "cable-lateral-raise",
+    "name": "Cable Lateral Raise",
+    "category": "push",
+    "equipment": ["cable"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Lateral Deltoid", "emphasis": 0.9 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "machine-lateral-raise",
+    "name": "Machine Lateral Raise",
+    "category": "push",
+    "equipment": ["machine"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Lateral Deltoid", "emphasis": 0.95 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.05 }
+    ]
+  },
+  {
+    "id": "front-raise",
+    "name": "Front Raise",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Anterior Deltoid", "emphasis": 0.9 },
+      { "muscle": "Lateral Deltoid", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "cable-front-raise",
+    "name": "Cable Front Raise",
+    "category": "push",
+    "equipment": ["cable"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Anterior Deltoid", "emphasis": 0.9 },
+      { "muscle": "Lateral Deltoid", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "reverse-pec-deck",
+    "name": "Reverse Pec Deck",
+    "category": "pull",
+    "equipment": ["machine"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Posterior Deltoid", "emphasis": 0.7 },
+      { "muscle": "Rhomboids", "emphasis": 0.3 }
+    ]
+  },
+  {
+    "id": "bent-over-dumbbell-rear-delt-raise",
+    "name": "Bent-Over Dumbbell Rear Delt Raise",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Posterior Deltoid", "emphasis": 0.75 },
+      { "muscle": "Rhomboids", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "cable-rear-delt-flye",
+    "name": "Cable Rear Delt Flye",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Posterior Deltoid", "emphasis": 0.8 },
+      { "muscle": "Rhomboids", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "upright-row",
+    "name": "Upright Row",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Lateral Deltoid", "emphasis": 0.5 },
+      { "muscle": "Trapezius", "emphasis": 0.35 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "cable-upright-row",
+    "name": "Cable Upright Row",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Shoulders",
+    "bias": [
+      { "muscle": "Lateral Deltoid", "emphasis": 0.5 },
+      { "muscle": "Trapezius", "emphasis": 0.35 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "neck-curl",
+    "name": "Neck Curl",
+    "category": "pull",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Shoulders",
+    "bias": [{ "muscle": "Neck", "emphasis": 1.0 }]
+  },
+  {
+    "id": "machine-neck-extension",
+    "name": "Machine Neck Extension",
+    "category": "pull",
+    "equipment": ["machine"],
+    "muscleGroup": "Shoulders",
+    "bias": [{ "muscle": "Neck", "emphasis": 1.0 }]
+  },
+  {
+    "id": "barbell-curl",
+    "name": "Barbell Curl",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Biceps Brachii", "emphasis": 0.8 },
+      { "muscle": "Brachialis", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "ez-bar-curl",
+    "name": "EZ-Bar Curl",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Biceps Brachii", "emphasis": 0.8 },
+      { "muscle": "Brachialis", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "dumbbell-curl",
+    "name": "Dumbbell Curl",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Biceps Brachii", "emphasis": 0.8 },
+      { "muscle": "Brachialis", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "hammer-curl",
+    "name": "Hammer Curl",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Brachialis", "emphasis": 0.5 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.3 },
+      { "muscle": "Brachioradialis", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "incline-dumbbell-curl",
+    "name": "Incline Dumbbell Curl",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Biceps Brachii", "emphasis": 0.85 },
+      { "muscle": "Brachialis", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "preacher-curl",
+    "name": "Preacher Curl",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Biceps Brachii", "emphasis": 0.85 },
+      { "muscle": "Brachialis", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "cable-curl",
+    "name": "Cable Curl",
+    "category": "pull",
+    "equipment": ["cable"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Biceps Brachii", "emphasis": 0.8 },
+      { "muscle": "Brachialis", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "concentration-curl",
+    "name": "Concentration Curl",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Biceps Brachii", "emphasis": 0.9 },
+      { "muscle": "Brachialis", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "machine-curl",
+    "name": "Machine Curl",
+    "category": "pull",
+    "equipment": ["machine"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Biceps Brachii", "emphasis": 0.85 },
+      { "muscle": "Brachialis", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "triceps-pushdown",
+    "name": "Triceps Pushdown",
+    "category": "push",
+    "equipment": ["cable"],
+    "muscleGroup": "Arms",
+    "bias": [{ "muscle": "Triceps Brachii", "emphasis": 1.0 }]
+  },
+  {
+    "id": "overhead-cable-triceps-extension",
+    "name": "Overhead Cable Triceps Extension",
+    "category": "push",
+    "equipment": ["cable"],
+    "muscleGroup": "Arms",
+    "bias": [{ "muscle": "Triceps Brachii", "emphasis": 1.0 }]
+  },
+  {
+    "id": "skull-crusher",
+    "name": "Skull Crusher",
+    "category": "push",
+    "equipment": ["barbell"],
+    "muscleGroup": "Arms",
+    "bias": [{ "muscle": "Triceps Brachii", "emphasis": 1.0 }]
+  },
+  {
+    "id": "close-grip-bench-press",
+    "name": "Close-Grip Bench Press",
+    "category": "push",
+    "equipment": ["barbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Triceps Brachii", "emphasis": 0.55 },
+      { "muscle": "Pectoralis Major", "emphasis": 0.3 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "dumbbell-overhead-triceps-extension",
+    "name": "Dumbbell Overhead Triceps Extension",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [{ "muscle": "Triceps Brachii", "emphasis": 1.0 }]
+  },
+  {
+    "id": "triceps-dip",
+    "name": "Triceps Dip",
+    "category": "push",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Triceps Brachii", "emphasis": 0.7 },
+      { "muscle": "Anterior Deltoid", "emphasis": 0.2 },
+      { "muscle": "Pectoralis Major", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "machine-triceps-extension",
+    "name": "Machine Triceps Extension",
+    "category": "push",
+    "equipment": ["machine"],
+    "muscleGroup": "Arms",
+    "bias": [{ "muscle": "Triceps Brachii", "emphasis": 1.0 }]
+  },
+  {
+    "id": "dumbbell-kickback",
+    "name": "Dumbbell Kickback",
+    "category": "push",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [{ "muscle": "Triceps Brachii", "emphasis": 1.0 }]
+  },
+  {
+    "id": "wrist-curl",
+    "name": "Wrist Curl",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [{ "muscle": "Forearms", "emphasis": 1.0 }]
+  },
+  {
+    "id": "reverse-wrist-curl",
+    "name": "Reverse Wrist Curl",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [{ "muscle": "Forearms", "emphasis": 1.0 }]
+  },
+  {
+    "id": "farmers-carry",
+    "name": "Farmer's Carry",
+    "category": "pull",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Forearms", "emphasis": 0.6 },
+      { "muscle": "Trapezius", "emphasis": 0.4 }
+    ]
+  },
+  {
+    "id": "reverse-curl",
+    "name": "Reverse Curl",
+    "category": "pull",
+    "equipment": ["barbell"],
+    "muscleGroup": "Arms",
+    "bias": [
+      { "muscle": "Brachioradialis", "emphasis": 0.5 },
+      { "muscle": "Biceps Brachii", "emphasis": 0.3 },
+      { "muscle": "Forearms", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "plank",
+    "name": "Plank",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.6 },
+      { "muscle": "Obliques", "emphasis": 0.4 }
+    ]
+  },
+  {
+    "id": "side-plank",
+    "name": "Side Plank",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Obliques", "emphasis": 0.9 },
+      { "muscle": "Rectus Abdominis", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "cable-crunch",
+    "name": "Cable Crunch",
+    "category": "core",
+    "equipment": ["cable"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.85 },
+      { "muscle": "Obliques", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "machine-crunch",
+    "name": "Machine Crunch",
+    "category": "core",
+    "equipment": ["machine"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.9 },
+      { "muscle": "Obliques", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "hanging-leg-raise",
+    "name": "Hanging Leg Raise",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.7 },
+      { "muscle": "Obliques", "emphasis": 0.3 }
+    ]
+  },
+  {
+    "id": "hanging-knee-raise",
+    "name": "Hanging Knee Raise",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.75 },
+      { "muscle": "Obliques", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "sit-up",
+    "name": "Sit-Up",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.8 },
+      { "muscle": "Obliques", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "crunch",
+    "name": "Crunch",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.9 },
+      { "muscle": "Obliques", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "russian-twist",
+    "name": "Russian Twist",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Obliques", "emphasis": 0.75 },
+      { "muscle": "Rectus Abdominis", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "cable-woodchopper",
+    "name": "Cable Woodchopper",
+    "category": "core",
+    "equipment": ["cable"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Obliques", "emphasis": 0.8 },
+      { "muscle": "Rectus Abdominis", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "ab-wheel-rollout",
+    "name": "Ab Wheel Rollout",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.65 },
+      { "muscle": "Obliques", "emphasis": 0.2 },
+      { "muscle": "Erector Spinae", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "bicycle-crunch",
+    "name": "Bicycle Crunch",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Obliques", "emphasis": 0.55 },
+      { "muscle": "Rectus Abdominis", "emphasis": 0.45 }
+    ]
+  },
+  {
+    "id": "weighted-sit-up",
+    "name": "Weighted Sit-Up",
+    "category": "core",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.75 },
+      { "muscle": "Obliques", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "decline-sit-up",
+    "name": "Decline Sit-Up",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.8 },
+      { "muscle": "Obliques", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "flutter-kicks",
+    "name": "Flutter Kicks",
+    "category": "core",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Core",
+    "bias": [
+      { "muscle": "Rectus Abdominis", "emphasis": 0.7 },
+      { "muscle": "Obliques", "emphasis": 0.3 }
+    ]
+  },
+  {
+    "id": "barbell-back-squat",
+    "name": "Barbell Back Squat",
+    "category": "legs",
+    "equipment": ["barbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.5 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.3 },
+      { "muscle": "Hamstrings", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "front-squat",
+    "name": "Front Squat",
+    "category": "legs",
+    "equipment": ["barbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.65 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.2 },
+      { "muscle": "Erector Spinae", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "goblet-squat",
+    "name": "Goblet Squat",
+    "category": "legs",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.6 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.4 }
+    ]
+  },
+  {
+    "id": "leg-press",
+    "name": "Leg Press",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.6 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.3 },
+      { "muscle": "Hamstrings", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "hack-squat",
+    "name": "Hack Squat",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.75 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "smith-machine-squat",
+    "name": "Smith Machine Squat",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.55 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.3 },
+      { "muscle": "Hamstrings", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "leg-extension",
+    "name": "Leg Extension",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Quadriceps", "emphasis": 1.0 }]
+  },
+  {
+    "id": "walking-lunge",
+    "name": "Walking Lunge",
+    "category": "legs",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.5 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.35 },
+      { "muscle": "Hamstrings", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "bulgarian-split-squat",
+    "name": "Bulgarian Split Squat",
+    "category": "legs",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.5 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.35 },
+      { "muscle": "Hamstrings", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "step-up",
+    "name": "Step-Up",
+    "category": "legs",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.45 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.4 },
+      { "muscle": "Hamstrings", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "sissy-squat",
+    "name": "Sissy Squat",
+    "category": "legs",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Quadriceps", "emphasis": 1.0 }]
+  },
+  {
+    "id": "romanian-deadlift",
+    "name": "Romanian Deadlift",
+    "category": "legs",
+    "equipment": ["barbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Hamstrings", "emphasis": 0.55 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.3 },
+      { "muscle": "Erector Spinae", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "dumbbell-romanian-deadlift",
+    "name": "Dumbbell Romanian Deadlift",
+    "category": "legs",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Hamstrings", "emphasis": 0.55 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.3 },
+      { "muscle": "Erector Spinae", "emphasis": 0.15 }
+    ]
+  },
+  {
+    "id": "leg-curl",
+    "name": "Leg Curl",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Hamstrings", "emphasis": 1.0 }]
+  },
+  {
+    "id": "seated-leg-curl",
+    "name": "Seated Leg Curl",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Hamstrings", "emphasis": 1.0 }]
+  },
+  {
+    "id": "nordic-curl",
+    "name": "Nordic Curl",
+    "category": "legs",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Hamstrings", "emphasis": 0.9 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "single-leg-romanian-deadlift",
+    "name": "Single-Leg Romanian Deadlift",
+    "category": "legs",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Hamstrings", "emphasis": 0.5 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.3 },
+      { "muscle": "Abductors", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "hip-thrust",
+    "name": "Hip Thrust",
+    "category": "legs",
+    "equipment": ["barbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Gluteus Maximus", "emphasis": 0.75 },
+      { "muscle": "Hamstrings", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "glute-bridge",
+    "name": "Glute Bridge",
+    "category": "legs",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Gluteus Maximus", "emphasis": 0.8 },
+      { "muscle": "Hamstrings", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "cable-kickback",
+    "name": "Cable Kickback",
+    "category": "legs",
+    "equipment": ["cable"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Gluteus Maximus", "emphasis": 0.9 },
+      { "muscle": "Hamstrings", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "machine-hip-thrust",
+    "name": "Machine Hip Thrust",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Gluteus Maximus", "emphasis": 0.8 },
+      { "muscle": "Hamstrings", "emphasis": 0.2 }
+    ]
+  },
+  {
+    "id": "cable-hip-adduction",
+    "name": "Cable Hip Adduction",
+    "category": "legs",
+    "equipment": ["cable"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Adductors", "emphasis": 1.0 }]
+  },
+  {
+    "id": "machine-hip-adduction",
+    "name": "Machine Hip Adduction",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Adductors", "emphasis": 1.0 }]
+  },
+  {
+    "id": "cable-hip-abduction",
+    "name": "Cable Hip Abduction",
+    "category": "legs",
+    "equipment": ["cable"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Abductors", "emphasis": 0.7 },
+      { "muscle": "Gluteus Medius", "emphasis": 0.3 }
+    ]
+  },
+  {
+    "id": "machine-hip-abduction",
+    "name": "Machine Hip Abduction",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Abductors", "emphasis": 0.7 },
+      { "muscle": "Gluteus Medius", "emphasis": 0.3 }
+    ]
+  },
+  {
+    "id": "side-lying-hip-abduction",
+    "name": "Side-Lying Hip Abduction",
+    "category": "legs",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Gluteus Medius", "emphasis": 0.7 },
+      { "muscle": "Abductors", "emphasis": 0.3 }
+    ]
+  },
+  {
+    "id": "clamshell",
+    "name": "Clamshell",
+    "category": "legs",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Gluteus Medius", "emphasis": 0.9 },
+      { "muscle": "Abductors", "emphasis": 0.1 }
+    ]
+  },
+  {
+    "id": "sumo-squat",
+    "name": "Sumo Squat",
+    "category": "legs",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Quadriceps", "emphasis": 0.4 },
+      { "muscle": "Adductors", "emphasis": 0.35 },
+      { "muscle": "Gluteus Maximus", "emphasis": 0.25 }
+    ]
+  },
+  {
+    "id": "standing-calf-raise",
+    "name": "Standing Calf Raise",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Gastrocnemius", "emphasis": 1.0 }]
+  },
+  {
+    "id": "seated-calf-raise",
+    "name": "Seated Calf Raise",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Soleus", "emphasis": 1.0 }]
+  },
+  {
+    "id": "standing-dumbbell-calf-raise",
+    "name": "Standing Dumbbell Calf Raise",
+    "category": "legs",
+    "equipment": ["dumbbell"],
+    "muscleGroup": "Legs",
+    "bias": [{ "muscle": "Gastrocnemius", "emphasis": 1.0 }]
+  },
+  {
+    "id": "leg-press-calf-raise",
+    "name": "Leg Press Calf Raise",
+    "category": "legs",
+    "equipment": ["machine"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Gastrocnemius", "emphasis": 0.7 },
+      { "muscle": "Soleus", "emphasis": 0.3 }
+    ]
+  },
+  {
+    "id": "donkey-calf-raise",
+    "name": "Donkey Calf Raise",
+    "category": "legs",
+    "equipment": ["bodyweight"],
+    "muscleGroup": "Legs",
+    "bias": [
+      { "muscle": "Gastrocnemius", "emphasis": 0.8 },
+      { "muscle": "Soleus", "emphasis": 0.2 }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+# Claude Code local settings — machine/session-specific, not shared
+.claude/settings.local.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+
+# In case Node tooling gets added later
+node_modules/

@@ -1,0 +1,31 @@
+<svg viewBox="0 0 180 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Front view muscle heatmap">
+  <!-- decorative, non-interactive -->
+  <circle class="body-decor" cx="90" cy="22" r="15" />
+  <rect class="body-decor" x="82" y="35" width="16" height="8" />
+  <rect class="body-decor" x="26" y="114" width="18" height="52" rx="6" />
+  <rect class="body-decor" x="136" y="114" width="18" height="52" rx="6" />
+  <rect class="body-decor" x="58" y="290" width="28" height="8" rx="3" />
+  <rect class="body-decor" x="94" y="290" width="28" height="8" rx="3" />
+
+  <!-- shoulders -->
+  <ellipse class="muscle-region heat-cold" data-muscle="shoulders" cx="52" cy="58" rx="16" ry="12"><title>Shoulders</title></ellipse>
+  <ellipse class="muscle-region heat-cold" data-muscle="shoulders" cx="128" cy="58" rx="16" ry="12"><title>Shoulders</title></ellipse>
+
+  <!-- chest -->
+  <rect class="muscle-region heat-cold" data-muscle="chest" x="60" y="50" width="60" height="42" rx="8"><title>Chest</title></rect>
+
+  <!-- biceps -->
+  <rect class="muscle-region heat-cold" data-muscle="biceps" x="28" y="54" width="20" height="58" rx="6"><title>Biceps</title></rect>
+  <rect class="muscle-region heat-cold" data-muscle="biceps" x="132" y="54" width="20" height="58" rx="6"><title>Biceps</title></rect>
+
+  <!-- core -->
+  <rect class="muscle-region heat-cold" data-muscle="core" x="64" y="94" width="52" height="58" rx="8"><title>Core</title></rect>
+
+  <!-- quads -->
+  <rect class="muscle-region heat-cold" data-muscle="quads" x="58" y="154" width="28" height="82" rx="8"><title>Quads</title></rect>
+  <rect class="muscle-region heat-cold" data-muscle="quads" x="94" y="154" width="28" height="82" rx="8"><title>Quads</title></rect>
+
+  <!-- calves (front) -->
+  <rect class="muscle-region heat-cold" data-muscle="calves" x="60" y="240" width="24" height="50" rx="6"><title>Calves</title></rect>
+  <rect class="muscle-region heat-cold" data-muscle="calves" x="96" y="240" width="24" height="50" rx="6"><title>Calves</title></rect>
+</svg>

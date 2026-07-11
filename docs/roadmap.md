@@ -145,6 +145,13 @@ components instead.
   fixed by generating one with `crypto.randomUUID()` at finish time. See
   `docs/data-model.md`'s workout log entry field notes.
 
+## Done (2026-07-11, later still) — remove an exercise from the in-progress session
+
+- Each exercise card on the Log screen now has a small ✕ that drops that
+  exercise (and any sets logged for it) from the current session before
+  Finish is pressed — no confirm needed, since nothing's saved yet. See
+  `docs/decisions.md` "Remove an exercise from the in-progress session."
+
 ---
 
 ## Not yet built

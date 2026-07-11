@@ -376,6 +376,16 @@ button:focus-visible {
   margin-bottom: var(--space-sm);
 }
 
+.exercise-card-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.remove-exercise-btn {
+  font-size: var(--font-size-body);
+}
+
 .set-rows {
   display: flex;
   flex-direction: column;

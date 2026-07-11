@@ -121,6 +121,13 @@ RPE chosen over 1RM-based weighting because:
 
 *Note: heat formula flagged for revisiting post-MVP once real usage data is available.*
 
+### Remove an exercise from the in-progress session — RESOLVED 2026-07-11
+**Decision:** Each exercise card in the active Log screen session now has a small ✕ (`.remove-exercise-btn`, reusing `.icon-button`) in its header, dropping that exercise — and any sets already entered for it — from `currentSession` before Finish is pressed. No `confirm()` gate, unlike History's delete-a-saved-log flow: nothing has been persisted yet, so there's nothing destructive to guard against, just an in-memory array filter followed by a re-render.
+
+Required restructuring `buildExerciseCard`'s header markup slightly: `exercise-name`/`exercise-meta` are now wrapped in a new `.exercise-card-title` container so the header's existing `justify-content: space-between` still reads as "title block on the left, one action on the right" with three children instead of two. The read-only card markup History's log detail sheet reuses (`js/history.js`) was deliberately left as the old two-child structure — it has no remove action and isn't meant to, so it didn't need the wrapper.
+
+**Reasoning:** Distinct from (and simpler than) History's delete flow — this corrects an accidental add before anything is saved, not a persisted-data deletion. Prompted directly by testing: added Push-Up to a session by mistake with no way to back out short of finishing the whole session or reloading the page.
+
 ---
 
 ## UI / UX

@@ -66,8 +66,11 @@ function buildExerciseCard(entry) {
   li.className = 'exercise-card';
   li.innerHTML = `
     <div class="exercise-card-header">
-      <span class="exercise-name">${exercise.name}</span>
-      <span class="exercise-meta">${exercise.muscleGroup}</span>
+      <div class="exercise-card-title">
+        <span class="exercise-name">${exercise.name}</span>
+        <span class="exercise-meta">${exercise.muscleGroup}</span>
+      </div>
+      <button class="remove-exercise-btn icon-button" aria-label="Remove exercise" title="Remove exercise">✕</button>
     </div>
     <div class="set-rows">
       ${entry.sets
@@ -89,6 +92,16 @@ function buildExerciseCard(entry) {
   const repsInput = li.querySelector('[data-field="reps"]');
   const weightInput = li.querySelector('[data-field="weight"]');
   const rpeInput = li.querySelector('[data-field="rpe"]');
+
+  // Drops the exercise (and any sets already logged for it) from the
+  // in-progress session — for correcting an accidental add before Finish,
+  // not the same thing as History's delete-a-saved-log flow (data.js's
+  // deleteLog), which operates on already-persisted logs. No confirm()
+  // here: nothing's been saved yet, so there's nothing destructive to guard.
+  li.querySelector('.remove-exercise-btn').addEventListener('click', () => {
+    currentSession.exercises = currentSession.exercises.filter((e) => e !== entry);
+    renderSession();
+  });
 
   // This card gets thrown away and rebuilt on every renderSession() call,
   // so this listener is safe to attach fresh each time — no risk of

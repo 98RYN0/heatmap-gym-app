@@ -49,6 +49,7 @@ Reference file for all data structures. Update as the model evolves.
 ```
 
 ### Field notes
+- `id` — `crypto.randomUUID()`, assigned in `log.js`'s `finishSession()`. Needed to view/delete one specific log from the History screen (`js/history.js`'s `deleteLog(id)`) — a log's position in the array or its `date` alone isn't a stable enough key, since more than one workout can be logged on the same date
 - `weight` — stored in kg
 - `rpe` — Rate of Perceived Exertion, integer 1–10. Presented to user as "how hard was that set?" to keep it accessible. Captures relative effort without needing individual baselines
 

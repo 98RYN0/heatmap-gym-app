@@ -132,6 +132,19 @@ components instead.
   loop — see `docs/decisions.md` "Dev server bug found + fixed along the
   way."
 
+## Done (2026-07-11, later same day) — History: view + delete a logged workout
+
+- Tapping a History list entry opens a new bottom sheet showing that log's
+  full detail (exercise names, muscle group, every set's reps/weight/RPE),
+  and a "Delete workout" button that removes it and repaints the heatmap.
+  See `docs/decisions.md` "View + delete a logged workout" for the full
+  design, including the new `.cta-danger` button style and why this is
+  list-view-only (not the calendar).
+- `js/data.js` gained `deleteLog(id)`. Along the way, found and fixed a real
+  gap: `finishSession()` never assigned a logged workout an `id` at all —
+  fixed by generating one with `crypto.randomUUID()` at finish time. See
+  `docs/data-model.md`'s workout log entry field notes.
+
 ---
 
 ## Not yet built

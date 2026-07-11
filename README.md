@@ -14,7 +14,10 @@ The core loop works end to end: browse/search the exercise library, add
 exercises to a workout session, log sets (reps/weight/RPE), finish the
 session (persists to `localStorage`), and watch the front/back heatmap and
 callout cards repaint from real heat data. History (list + calendar) reads
-from the same log data. The heatmap body figures are rendered by the
+from the same log data — tapping a list entry shows the full logged detail
+(exercises, sets, reps, weight, RPE) and can delete it, which repaints the
+heatmap to match (see `docs/decisions.md` "View + delete a logged
+workout"). The heatmap body figures are rendered by the
 [`body-highlighter`](https://github.com/lahaxearnaud/body-highlighter)
 library (CDN import, zero dependencies) — real anatomical regions, no
 Simple/Advanced toggle (removed once it became clear the two were always

@@ -257,6 +257,19 @@ While testing, `.claude/serve.ps1` (the local static file server, not part of th
 
 ---
 
+## History
+
+### View + delete a logged workout — RESOLVED 2026-07-11
+**Decision:** Tapping a History list entry opens a new bottom sheet (`#log-detail-sheet`) showing that log's date, a summary line, and one read-only `.exercise-card` per logged exercise (name, muscle group, and every set's reps/weight/RPE) — reusing the exact same card markup `log.js` renders for an active session, minus the interactive add-set form. A "Delete workout" button, styled with a new `.cta-danger` class (same shape as `.cta-primary`, but using the existing `--color-heat-max` red so it doesn't read as the primary positive action), removes the log after a native `confirm()` — consistent with the existing import flow's "destructive, confirm first" pattern.
+
+Deleting changes the data the heatmap is computed from, so it needed the same repaint the Log screen's "Finish" already triggers. Rather than add a second callback, the existing `onDataImported` callback (previously only fired after a backup import) was renamed to `onLogsChanged` and now fires from both import and delete — one callback, two triggers, since both need the identical downstream effect.
+
+**Scope boundary:** list view only, not the calendar — a calendar day can't unambiguously represent one log (nothing stops logging twice in a day), so disambiguating multiple same-day logs from a tapped calendar cell is a separate design question, not addressed here.
+
+**Bug found along the way:** `finishSession()` (`js/log.js`) never assigned an `id` to a session before saving it — every previously-logged workout in real usage had no stable identifier at all (only hand-written test fixtures happened to include one). Fixed by generating one with `crypto.randomUUID()` at finish time, same mechanism already used elsewhere for ids in a build with no backend. See `docs/data-model.md`'s workout log entry field notes.
+
+---
+
 ## Open questions / revisit later
 - Heat formula weighting — may need adjustment once tested with real data
 - Recency window — open to revisiting 10 days vs 7 days post-MVP

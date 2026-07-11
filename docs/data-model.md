@@ -151,6 +151,14 @@ region(s) it paints; a few map to more than one region (Soleus → both
 ---
 
 ## Storage (MVP)
-- All data stored in `localStorage` for MVP — no backend required
-- Keys: `heatmap_exercises` (exercise database), `heatmap_logs` (workout log entries)
-- Migrate to a backend (e.g. Supabase) post-MVP when user accounts become relevant
+- Exercise database: `fetch()`ed from `data/exercises.json` once and cached
+  in memory (`js/data.js`) — not stored in `localStorage`, it's static
+  content shipped with the app, not user data
+- Workout logs: `localStorage`, key `heatmap_logs` — no backend required
+- Hardened against browser storage eviction (not migrated to a different
+  storage API — see `docs/decisions.md` "Harden on-device persistence" for
+  why `localStorage` itself was kept) via `navigator.storage.persist()`,
+  PWA installability (`manifest.json` + `sw.js`), and a manual JSON
+  export/import backup (History screen topbar)
+- Migrate to a real backend (e.g. Supabase) post-MVP if cross-device sync
+  or accounts become a goal — single-device persistence doesn't need one

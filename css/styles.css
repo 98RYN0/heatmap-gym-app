@@ -67,6 +67,12 @@ button:focus-visible {
   font-weight: var(--font-weight-heading);
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
 .text-action {
   background: none;
   border: none;

@@ -116,13 +116,28 @@ components instead.
   top of `computeMuscleHeat` (per real muscle) — one summation loop
   feeding both, instead of two.
 
+## Done (2026-07-11) — hardened on-device persistence + PWA installability
+
+- `js/data.js` gained `requestPersistentStorage()` (`navigator.storage.persist()`,
+  best-effort/silent), `exportLogs()`/`importLogs()` (JSON backup —
+  buttons in the History topbar). `manifest.json` + a deliberately minimal
+  `sw.js` (no offline asset caching, just enough for installability) make
+  the app installable to a homescreen, which is what actually matters for
+  mobile storage eviction — see `docs/decisions.md` "Harden on-device
+  persistence" for the full reasoning, including why `localStorage` was
+  kept rather than migrating to IndexedDB. This also closes out the
+  **PWA manifest** item that had been sitting in this backlog.
+- Along the way, found and fixed a real bug in `.claude/serve.ps1` (the
+  local dev server, not the shipped app) that could wedge its request
+  loop — see `docs/decisions.md` "Dev server bug found + fixed along the
+  way."
+
 ---
 
 ## Not yet built
 
 - **Nav icons** — Tabler outline set, replacing the current text labels
 - **Light mode** — `[data-theme="light"]` token overrides + a toggle
-- **PWA manifest** — `manifest.json`, icons, `display: standalone`
 - **Training balance card** — push/pull or upper/lower split, per
   `docs/decisions.md`'s "Heatmap home screen — secondary content" decision
 - **Finer heatmap sub-muscle splits** — bicep/tricep heads, quad heads,

@@ -234,6 +234,22 @@ verification. Comparing everything in one consistent reference frame
 
 ---
 
+## Storage & persistence
+
+### Harden on-device persistence — RESOLVED 2026-07-11
+**Decision:** Ryan asked about persistence after noticing what turned out to be Claude clearing `localStorage` between test batches during verification, not a real bug — `localStorage` already survives normal app/browser/server restarts. Confirmed the actual goal was reliable *single-device* storage, not cross-device sync (which stays deferred — see `docs/data-model.md` "Storage (MVP)"). Implemented three things:
+
+1. **`navigator.storage.persist()`** (`js/data.js`'s `requestPersistentStorage()`, called once from `app.js`) — asks supporting browsers (Chrome/Firefox/Edge) to exempt this origin from automatic storage eviction under pressure. Best-effort and silent by design — the browser grants or denies based on its own engagement heuristics (confirmed via `navigator.storage.persisted()` in a fresh test browser: `false`, as expected with no real usage history — this is the browser working correctly, not a bug).
+2. **PWA installability** — `manifest.json` + a deliberately minimal `sw.js` (install/activate/fetch passthrough, no offline asset caching — that's a separate feature with its own cache-versioning concerns, not needed here). This was already sitting in `docs/roadmap.md`'s backlog; doing it now serves double duty, since an installed/homescreen PWA is treated as persistent storage on mobile browsers (especially iOS Safari) in a way a plain bookmarked tab isn't.
+3. **Export/import backup** (`js/data.js`'s `exportLogs()`/`importLogs()`, UI in the History screen's topbar) — a plain downloadable JSON file, protecting against the cases neither of the above can prevent (manually clearing site data, a new device, a browser bug). Import is destructive (replaces all logs), so it's gated behind a native `confirm()` — no custom dialog system exists yet and this is the one destructive action in the app, so building one just for this wasn't warranted.
+
+**Explicitly not done:** migrating from `localStorage` to IndexedDB. Both are evicted under the same browser storage-pressure policy, so it wouldn't reduce eviction risk — the actual risk this work targets. IndexedDB's real advantage (capacity) isn't a constraint here: years of workout logs as JSON stays well under `localStorage`'s ~5-10MB cap. Would add real complexity (async API, a data migration) for a problem this app doesn't have.
+
+### Dev server bug found + fixed along the way
+While testing, `.claude/serve.ps1` (the local static file server, not part of the shipped app) threw `"Bytes to be written to the stream exceed the Content-Length bytes size specified"` and appeared to wedge the whole listener loop. Root cause: the 404-response branch wrote bytes without ever setting `ContentLength64` first (unlike the 200 branch, which always matched the two). Fixed by setting it in both branches, wrapped the per-request handling in try/catch so one bad request can't take down the loop, and set `KeepAlive = $false` since this single-threaded server can only handle one request at a time — keep-alive connections being reused/pipelined by the browser before a response fully closed was the likely trigger.
+
+---
+
 ## Open questions / revisit later
 - Heat formula weighting — may need adjustment once tested with real data
 - Recency window — open to revisiting 10 days vs 7 days post-MVP

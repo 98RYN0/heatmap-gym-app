@@ -27,21 +27,31 @@ exercises that target it best — tap one and it's added straight to
 today's session (see `docs/decisions.md` "Tap a region → quick-log
 sheet").
 
-Not yet built: nav icons, light mode, PWA manifest, the Training balance
-card, finer heatmap sub-muscle splits (bicep/tricep heads, lats vs.
-rhomboids — not a data gap, a rendering ceiling). See `docs/roadmap.md`
-for what's left.
+The app is installable as a PWA (`manifest.json` + `sw.js`) and requests
+persistent storage on load — both aimed at making `localStorage` survive
+long-term on mobile browsers, which evict storage for sites that aren't
+installed. A manual JSON export/import backup (History screen topbar)
+covers the cases neither can prevent. See `docs/decisions.md` "Harden
+on-device persistence" for the full reasoning.
+
+Not yet built: nav icons, light mode, the Training balance card, finer
+heatmap sub-muscle splits (bicep/tricep heads, lats vs. rhomboids — not a
+data gap, a rendering ceiling). See `docs/roadmap.md` for what's left.
 
 ## Structure
 
 ```
 index.html          Single-page shell — 4 screens + bottom nav + detail sheet
+manifest.json        PWA manifest — installability, theme colour, icon
+sw.js                 Minimal service worker (no offline caching — see docs/decisions.md)
 css/
   tokens.css         Colour palette, typography, spacing (design tokens)
   styles.css         Layout, components, nav
 js/                  ES modules, loaded via <script type="module">
-  app.js             Orchestrator — nav/tab switching, bootstraps + wires the other modules
-  data.js            fetch() for exercises.json, localStorage read/write for logs
+  app.js             Orchestrator — nav/tab switching, bootstraps + wires the other modules,
+                     registers sw.js, requests persistent storage
+  data.js            fetch() for exercises.json, localStorage read/write for logs,
+                     storage-persistence request, export/import backup
   utils.js           Small shared helpers (capitalize, local-date formatting)
   muscle-taxonomy.js The 6 exercise-library groups + the real-muscle → body-highlighter
                      region mapping (js/heat.js's rollup table)
@@ -49,11 +59,12 @@ js/                  ES modules, loaded via <script type="module">
   log.js             Active session state: add exercise/sets, finish → localStorage
   heat.js            Pure heat-calc functions (no DOM): set heat, recency, normalize, tier
   heatmap.js         Renders body figures via the body-highlighter CDN import, paints
-                     regions + callout cards from heat.js output
-  history.js         History screen: reverse-chronological list + month calendar
+                     regions + callout cards from heat.js output, quick-log sheet
+  history.js         History screen: list + calendar, export/import backup UI
 data/
   exercises.json     Exercise database matching docs/data-model.md's schema
 assets/
+  icon.svg           App/PWA icon
   legacy/            Superseded hand-drawn body SVGs, unused — see assets/README.md
 docs/
   decisions.md       Product + design decisions log, with reasoning
@@ -79,10 +90,10 @@ so there's a zero-dependency static server in `.claude/serve.ps1` (pure
 PowerShell, no install required):
 
 ```
-powershell -NoProfile -ExecutionPolicy Bypass -File .claude/serve.ps1 -Port 5173
+powershell -NoProfile -ExecutionPolicy Bypass -File .claude/serve.ps1 -Port 5174
 ```
 
-then open `http://localhost:5173`. If Node ever gets installed properly,
+then open `http://localhost:5174`. If Node ever gets installed properly,
 `npx serve .` works just as well and `.claude/launch.json` can point back to
 it.
 

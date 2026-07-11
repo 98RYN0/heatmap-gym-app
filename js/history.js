@@ -1,7 +1,9 @@
 // History screen — a reverse-chronological list and a month calendar, both
-// derived from the same localStorage logs (no separate data source).
+// derived from the same localStorage logs (no separate data source). Also
+// owns the manual backup UI (export/import) — a natural fit since this
+// screen is already "your training data over time."
 
-import { loadLogs } from './data.js';
+import { loadLogs, exportLogs, importLogs } from './data.js';
 import { capitalize, todayDateString } from './utils.js';
 
 const listView = document.querySelector('.history-view[data-view="list"]');
@@ -11,16 +13,21 @@ const monthLabel = document.querySelector('.calendar-month-label');
 const calendarGrid = document.querySelector('.calendar-grid');
 const prevBtn = document.getElementById('cal-prev');
 const nextBtn = document.getElementById('cal-next');
+const exportBtn = document.getElementById('export-data-btn');
+const importBtn = document.getElementById('import-data-btn');
+const importFileInput = document.getElementById('import-file-input');
 
 const DOW_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; // Monday-start, matches renderCalendar()'s startDay math
 
 let exercises = [];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth(); // 0-indexed (0 = January), same as the Date API
+let onDataImported = null; // callback from app.js — repaints the heatmap, since imported logs change its data too
 
 // Called once from app.js.
-export function initHistory(exerciseData) {
+export function initHistory(exerciseData, { onDataImported: onDataImportedCb } = {}) {
   exercises = exerciseData;
+  onDataImported = onDataImportedCb || null;
 
   toggleButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -34,7 +41,7 @@ export function initHistory(exerciseData) {
   prevBtn.addEventListener('click', () => {
     calMonth -= 1;
     if (calMonth < 0) {
-      calMonth = 11; // wrap Jan -> Dec of the previous year
+      calMonth = 11;
       calYear -= 1;
     }
     renderCalendar();
@@ -43,24 +50,45 @@ export function initHistory(exerciseData) {
   nextBtn.addEventListener('click', () => {
     calMonth += 1;
     if (calMonth > 11) {
-      calMonth = 0; // wrap Dec -> Jan of the next year
+      calMonth = 0;
       calYear += 1;
     }
     renderCalendar();
   });
 
+  exportBtn.addEventListener('click', exportLogs);
+  importBtn.addEventListener('click', () => importFileInput.click());
+  importFileInput.addEventListener('change', handleImportFile);
+
   renderHistoryList();
 }
 
-// Called by log.js after a session is saved, so History reflects the new
-// entry immediately without waiting for the user to leave and come back.
 export function refreshHistory() {
   renderHistoryList();
   if (calendarView.classList.contains('active')) renderCalendar();
 }
 
-// "Push day · 3 exercises" if every exercise in the session shares one
-// category, otherwise a generic "Mixed session" label.
+// Import replaces everything currently stored, so confirm first — this is
+// the one destructive action in the whole app, native confirm()/alert()
+// are a pragmatic fit rather than building a custom dialog just for this.
+async function handleImportFile(e) {
+  const file = e.target.files[0];
+  importFileInput.value = ''; // reset so re-picking the same file still fires 'change' next time
+  if (!file) return;
+
+  if (!confirm('Import this backup? It will replace all workouts currently saved on this device.')) {
+    return;
+  }
+
+  try {
+    await importLogs(file);
+    refreshHistory();
+    if (onDataImported) onDataImported();
+  } catch (err) {
+    alert(`Couldn't import that file: ${err.message}`);
+  }
+}
+
 function sessionLabel(log) {
   const categories = log.exercises
     .map((entry) => exercises.find((ex) => ex.id === entry.exerciseId)?.category)

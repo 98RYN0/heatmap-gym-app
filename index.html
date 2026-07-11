@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heatmap — Gym Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#111110">
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="css/tokens.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -85,9 +88,17 @@
             <section id="screen-history" class="screen" data-screen="history">
                 <div class="topbar">
                     <h1>History</h1>
-                    <div class="toggle-pill" data-toggle="history-view">
-                        <button class="toggle-option active" data-value="list">List</button>
-                        <button class="toggle-option" data-value="calendar">Calendar</button>
+                    <div class="topbar-actions">
+                        <div class="toggle-pill" data-toggle="history-view">
+                            <button class="toggle-option active" data-value="list">List</button>
+                            <button class="toggle-option" data-value="calendar">Calendar</button>
+                        </div>
+                        <!-- Backup, not the primary flow — see docs/decisions.md
+                             "Harden on-device persistence". Plain JSON download/
+                             upload, no server involved. -->
+                        <button class="icon-button" id="export-data-btn" title="Export backup" aria-label="Export backup">↓</button>
+                        <button class="icon-button" id="import-data-btn" title="Import backup" aria-label="Import backup">↑</button>
+                        <input type="file" id="import-file-input" accept="application/json" hidden>
                     </div>
                 </div>
 

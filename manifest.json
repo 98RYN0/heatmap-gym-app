@@ -1,0 +1,19 @@
+{
+  "name": "Heatmap — Muscle Training Tracker",
+  "short_name": "Heatmap",
+  "description": "A mobile-first gym tracker whose hero feature is an anatomical heatmap that shows which muscles you've trained recently.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111110",
+  "theme_color": "#111110",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

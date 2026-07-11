@@ -10,3 +10,7 @@ Thumbs.db
 
 # In case Node tooling gets added later
 node_modules/
+
+# Test exports from exercising the export/import backup feature during
+# development — not project content
+Backups/

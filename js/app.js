@@ -5,7 +5,7 @@
 // init function; app.js wires them together and hands out `switchTab` so
 // any module can navigate (e.g. Finish workout jumping back to Heatmap).
 
-import { loadExercises } from './data.js';
+import { loadExercises, requestPersistentStorage } from './data.js';
 import { initExercises } from './exercises.js';
 import { initLog, addExerciseToSession } from './log.js';
 import { initHeatmap, paintHeatmap } from './heatmap.js';
@@ -35,6 +35,21 @@ navButtons.forEach((button) => {
 // nav already reaches, so it just needs the same switchTab call.
 document.getElementById('log-workout-cta').addEventListener('click', () => switchTab('log'));
 
+// Registering a service worker (even one that does nothing but pass
+// requests through, see sw.js) is what makes the app installable to a
+// homescreen — the main lever for the browser treating this origin's
+// storage as persistent rather than evictable. Feature-detected: older
+// browsers just skip this and fall back to whatever storage.persist()
+// below manages to do.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {
+    // Not fatal — the app works the same without it, just without the
+    // installability/persistence benefit.
+  });
+}
+
+requestPersistentStorage();
+
 // Everything downstream needs the exercise database, so it's loaded first
 // and passed into each module's init function rather than each module
 // fetching it separately.
@@ -46,7 +61,11 @@ async function bootstrap() {
   // Exercise library's detail sheet — tapping a heatmap region's
   // suggestion behaves identically to tapping "Add to session" there.
   await initHeatmap(exercises, { onQuickAdd: addExerciseToSession }); // awaited: it fetches + injects the body SVGs before first paint
-  initHistory(exercises);
+  initHistory(exercises, {
+    // Importing a backup replaces the logs the heatmap is computed from —
+    // it needs the same repaint the Log screen's "Finish" triggers.
+    onDataImported: paintHeatmap,
+  });
   initLog(exercises, {
     switchTab,
     // Finishing a workout changes the data behind both the heatmap and

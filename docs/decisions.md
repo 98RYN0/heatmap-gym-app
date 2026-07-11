@@ -248,6 +248,13 @@ verification. Comparing everything in one consistent reference frame
 ### Dev server bug found + fixed along the way
 While testing, `.claude/serve.ps1` (the local static file server, not part of the shipped app) threw `"Bytes to be written to the stream exceed the Content-Length bytes size specified"` and appeared to wedge the whole listener loop. Root cause: the 404-response branch wrote bytes without ever setting `ContentLength64` first (unlike the 200 branch, which always matched the two). Fixed by setting it in both branches, wrapped the per-request handling in try/catch so one bad request can't take down the loop, and set `KeepAlive = $false` since this single-threaded server can only handle one request at a time — keep-alive connections being reused/pipelined by the browser before a response fully closed was the likely trigger.
 
+### Deployment — GitHub Pages — RESOLVED 2026-07-11
+**Decision:** Deployed to GitHub Pages at https://98ryn0.github.io/heatmap-gym-app/, serving directly from the `master` branch root (no build step needed — the app already runs as-is). This required making the repo **public** — GitHub Pages' free tier only publishes from public repos; private-repo Pages needs a paid plan. Ryan chose public + Pages over the alternative (keep it private, deploy via a host that supports private repos on a free tier, e.g. Netlify/Vercel) after that tradeoff was raised explicitly.
+
+**Reasoning:** Ryan asked how to test the PWA install flow on his phone. Two things ruled out simpler options: the local dev server only binds to `localhost` (unreachable from a phone at all), and even exposing it over the LAN wouldn't have worked — service worker registration and the "Add to Home Screen" prompt both require a secure context (HTTPS, or `localhost` specifically), so a plain-HTTP LAN address would silently fail to demonstrate installability even though the page would load. A real HTTPS deployment was the only way to actually test this.
+
+**Bug caught before it mattered:** `manifest.json`'s `start_url`/`scope` were `"/"`, which resolves to the *domain* root (`https://98ryn0.github.io/`) rather than this repo's `/heatmap-gym-app/` subpath — would have made the installed app's start_url wrong. Changed both to `"."`, which resolves relative to the manifest's own location and works correctly under any subpath (including local testing, where it's already effectively the root).
+
 ---
 
 ## Open questions / revisit later

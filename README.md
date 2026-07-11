@@ -1,5 +1,9 @@
 # Heatmap — Muscle Training Tracker
 
+**Live:** https://98ryn0.github.io/heatmap-gym-app/ (GitHub Pages — install
+it to your phone's homescreen to test the PWA experience, see
+`docs/decisions.md` "Deployment — GitHub Pages")
+
 A mobile-first PWA that shows which muscle groups you've trained recently as a
 thermal heatmap, so intuitive lifters can spot gaps in their training without
 following a fixed program.

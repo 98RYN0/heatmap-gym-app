@@ -62,9 +62,10 @@ async function bootstrap() {
   // suggestion behaves identically to tapping "Add to session" there.
   await initHeatmap(exercises, { onQuickAdd: addExerciseToSession }); // awaited: it fetches + injects the body SVGs before first paint
   initHistory(exercises, {
-    // Importing a backup replaces the logs the heatmap is computed from —
-    // it needs the same repaint the Log screen's "Finish" triggers.
-    onDataImported: paintHeatmap,
+    // Importing a backup or deleting a single log both change the logs
+    // the heatmap is computed from — either needs the same repaint the
+    // Log screen's "Finish" triggers.
+    onLogsChanged: paintHeatmap,
   });
   initLog(exercises, {
     switchTab,

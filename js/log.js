@@ -111,6 +111,7 @@ function buildExerciseCard(entry) {
 function finishSession() {
   if (currentSession.exercises.length === 0) return; // nothing to save
 
+  currentSession.id = crypto.randomUUID(); // needed to view/delete this specific log later (History screen)
   currentSession.date = todayDateString();
   addLog(currentSession);
   currentSession = { exercises: [] };

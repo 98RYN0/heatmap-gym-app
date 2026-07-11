@@ -27,6 +27,10 @@
   --color-accent-shadow: rgba(239, 159, 39, 0.45); /* accent's own rgb, for button drop-shadows */
   --color-accent-ring: rgba(239, 159, 39, 0.25); /* softer — sharp-edged focus rings need less opacity than a blurred shadow to read as subtle */
 
+  /* Destructive actions reuse --color-heat-max rather than introducing a
+     new colour — it's already the palette's most intense/alarming red. */
+  --color-danger-shadow: rgba(226, 75, 74, 0.45);
+
   /* Spacing */
   --space-xs: 4px;
   --space-sm: 8px;

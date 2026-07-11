@@ -37,6 +37,14 @@ export function addLog(log) {
   return logs;
 }
 
+// Removes one logged session by id — used when a workout was logged
+// incorrectly (History screen's log detail sheet).
+export function deleteLog(id) {
+  const logs = loadLogs().filter((log) => log.id !== id);
+  saveLogs(logs);
+  return logs;
+}
+
 // Asks the browser to exempt this origin's storage from automatic eviction
 // under storage pressure (Chrome/Firefox/Edge — no-op where unsupported,
 // e.g. Safari, which instead treats an installed/homescreen PWA as

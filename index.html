@@ -166,6 +166,27 @@
                 <ul class="exercise-list"></ul>
             </div>
         </div>
+
+        <!-- Log detail sheet — opened by tapping a History list entry
+             (js/history.js). Read-only view of one logged session: reuses
+             .session-list/.exercise-card styling from the Log screen minus
+             the interactive add-set form, since there's nothing to edit
+             here. "Delete workout" removes it and repaints the heatmap. -->
+        <div class="sheet-overlay" id="log-detail-sheet">
+            <div class="sheet-backdrop"></div>
+            <div class="sheet">
+                <div class="sheet-handle"></div>
+                <div class="sheet-header">
+                    <div>
+                        <h2 class="sheet-title"></h2>
+                        <p class="sheet-subtitle"></p>
+                    </div>
+                    <button class="sheet-close icon-button">✕</button>
+                </div>
+                <ul class="session-list"></ul>
+                <button class="cta-danger" id="delete-log-btn">Delete workout</button>
+            </div>
+        </div>
     </div>
 
     <!-- type="module" enables import/export across js/*.js — app.js is the

@@ -20,25 +20,39 @@ $mimeTypes = @{
 
 while ($listener.IsListening) {
     $context = $listener.GetContext()
-    $request = $context.Request
-    $response = $context.Response
+    try {
+        $request = $context.Request
+        $response = $context.Response
+        # Force each response to close its connection rather than keep-alive
+        # — this server handles one request at a time (GetContext() blocks),
+        # so a browser pipelining/reusing a connection for a second request
+        # (e.g. the implicit favicon.ico fetch) before the first fully closes
+        # was leaving responses in a bad state.
+        $response.KeepAlive = $false
 
-    $path = [Uri]::UnescapeDataString($request.Url.LocalPath)
-    if ($path -eq "/") { $path = "/index.html" }
-    $filePath = Join-Path $Root ($path.TrimStart("/"))
+        $path = [Uri]::UnescapeDataString($request.Url.LocalPath)
+        if ($path -eq "/") { $path = "/index.html" }
+        $filePath = Join-Path $Root ($path.TrimStart("/"))
 
-    if (Test-Path $filePath -PathType Leaf) {
-        $ext = [System.IO.Path]::GetExtension($filePath)
-        $contentType = $mimeTypes[$ext]
-        if (-not $contentType) { $contentType = "application/octet-stream" }
-        $bytes = [System.IO.File]::ReadAllBytes($filePath)
-        $response.ContentType = $contentType
-        $response.ContentLength64 = $bytes.Length
-        $response.OutputStream.Write($bytes, 0, $bytes.Length)
-    } else {
-        $response.StatusCode = 404
-        $notFound = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found: $path")
-        $response.OutputStream.Write($notFound, 0, $notFound.Length)
+        if (Test-Path $filePath -PathType Leaf) {
+            $ext = [System.IO.Path]::GetExtension($filePath)
+            $contentType = $mimeTypes[$ext]
+            if (-not $contentType) { $contentType = "application/octet-stream" }
+            $bytes = [System.IO.File]::ReadAllBytes($filePath)
+            $response.ContentType = $contentType
+            $response.ContentLength64 = $bytes.Length
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } else {
+            $response.StatusCode = 404
+            $notFound = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found: $path")
+            $response.ContentLength64 = $notFound.Length
+            $response.OutputStream.Write($notFound, 0, $notFound.Length)
+        }
+    } catch {
+        # Log and move on — one bad request (a dropped connection, a locked
+        # file, etc.) shouldn't take down the whole dev server loop.
+        Write-Host "Request error: $_"
+    } finally {
+        $context.Response.OutputStream.Close()
     }
-    $response.OutputStream.Close()
 }

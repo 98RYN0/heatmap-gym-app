@@ -4,8 +4,8 @@
     {
       "name": "web",
       "runtimeExecutable": "powershell.exe",
-      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ".claude/serve.ps1", "-Port", "5173"],
-      "port": 5173
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ".claude/serve.ps1", "-Port", "5174"],
+      "port": 5174
     }
   ]
 }

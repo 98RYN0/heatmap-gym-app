@@ -21,8 +21,23 @@ export async function loadExercises() {
 // localStorage only stores strings, so logs are parsed/stringified on the
 // way in and out. Falls back to an empty array on first run, when the key
 // doesn't exist yet.
+//
+// Backfills `id` on any log that predates it being assigned at finish time
+// (see log.js's finishSession()) — logs saved before that change have no
+// id at all, which silently breaks the History screen's view/delete-by-id
+// lookup for them. Every read goes through here, so this self-heals on
+// first load after the update rather than needing a one-off migration step.
 export function loadLogs() {
-  return JSON.parse(localStorage.getItem(LOGS_KEY) || '[]');
+  const logs = JSON.parse(localStorage.getItem(LOGS_KEY) || '[]');
+  let migrated = false;
+  logs.forEach((log) => {
+    if (!log.id) {
+      log.id = crypto.randomUUID();
+      migrated = true;
+    }
+  });
+  if (migrated) saveLogs(logs);
+  return logs;
 }
 
 export function saveLogs(logs) {

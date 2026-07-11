@@ -268,6 +268,8 @@ Deleting changes the data the heatmap is computed from, so it needed the same re
 
 **Bug found along the way:** `finishSession()` (`js/log.js`) never assigned an `id` to a session before saving it — every previously-logged workout in real usage had no stable identifier at all (only hand-written test fixtures happened to include one). Fixed by generating one with `crypto.randomUUID()` at finish time, same mechanism already used elsewhere for ids in a build with no backend. See `docs/data-model.md`'s workout log entry field notes.
 
+**Follow-up bug, caught by Ryan testing on his phone (2026-07-11):** the id fix above only covers logs saved *after* the update — anyone with logs already sitting in `localStorage` from before it (Ryan's phone, from earlier PWA-install testing) still had `id: undefined` on those, so tapping them did nothing (the id-based lookup silently failed to match). Fixed by backfilling `id` inside `loadLogs()` (`js/data.js`) itself: any log missing one gets `crypto.randomUUID()` assigned and the array re-saved, the first time it's read after the update. Every consumer already goes through `loadLogs()`, so this self-heals on next load with no separate migration step needed.
+
 ---
 
 ## Open questions / revisit later

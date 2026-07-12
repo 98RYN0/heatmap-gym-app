@@ -95,7 +95,7 @@ button:focus-visible {
   font-size: var(--font-size-value);
   line-height: 1;
   border-radius: 8px;
-  padding: var(--space-xs);
+  padding: var(--space-sm);
 }
 
 .icon-button:hover {
@@ -113,7 +113,7 @@ button:focus-visible {
 }
 
 .toggle-option {
-  padding: var(--space-xs) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   background: none;
   border: none;
   cursor: pointer;
@@ -270,7 +270,7 @@ button:focus-visible {
 
 .search-input {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-md);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -297,7 +297,7 @@ button:focus-visible {
 }
 
 .filter-pill {
-  padding: var(--space-xs) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   background: none;
   border: 1px solid var(--color-border);
   border-radius: 999px;
@@ -383,7 +383,7 @@ button:focus-visible {
 }
 
 .remove-exercise-btn {
-  font-size: var(--font-size-body);
+  font-size: var(--font-size-heading);
 }
 
 .set-rows {
@@ -420,10 +420,10 @@ button:focus-visible {
   border: none;
   cursor: pointer;
   color: var(--color-text-muted);
-  font-size: var(--font-size-label);
+  font-size: var(--font-size-value);
   line-height: 1;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: 6px;
 }
 
 .set-action-btn:hover {
@@ -448,12 +448,12 @@ button:focus-visible {
   width: 0;
   flex: 1;
   min-width: 0;
-  padding: var(--space-xs) var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--color-text);
-  font-size: var(--font-size-label);
+  font-size: var(--font-size-body);
   outline: none;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
@@ -469,12 +469,12 @@ button:focus-visible {
 
 .add-set-btn {
   flex-shrink: 0;
-  padding: var(--space-xs) var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   background: var(--color-accent);
   color: var(--color-accent-text);
   border: none;
-  border-radius: 6px;
-  font-size: var(--font-size-label);
+  border-radius: 8px;
+  font-size: var(--font-size-body);
   font-weight: var(--font-weight-heading);
   cursor: pointer;
 }

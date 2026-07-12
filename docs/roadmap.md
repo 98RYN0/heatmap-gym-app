@@ -173,6 +173,15 @@ components instead.
   See `docs/decisions.md` "Per-set duplicate/edit/remove in the active
   session."
 
+## Done (2026-07-11, later still again again again) — bigger tap targets for mobile
+
+- Ryan tested on his phone and found the set duplicate/edit/remove icons
+  and the reps/weight/RPE inputs too small to comfortably tap. Enlarged
+  those plus the other icon buttons, filter pills, toggle pills, and the
+  search input (font-size and padding bumped a step each). Set-row layout
+  re-checked at 375px width with the icons at their new size — still no
+  overflow, since the row had more spare width than it needed.
+
 ---
 
 ## Not yet built

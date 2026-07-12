@@ -11,8 +11,9 @@
 
   /* Thermal scale for the heatmap — cold matches --color-surface-raised so
      untrained muscles read as "just part of the UI" rather than an alert
-     colour. warm/hot/max are amber -> orange -> red, applied by heat.js's
-     tier() via the .heat-* classes in styles.css. */
+     colour. warm/hot/max are amber -> orange -> red: the anchor stops
+     js/heatmap.js's buildGradient() interpolates between to paint a
+     continuous gradient, not 4 discrete colours on their own. */
   --color-heat-cold: #2c2c2a;
   --color-heat-warm: #BA7517;
   --color-heat-hot: #EF9F27;

@@ -101,6 +101,15 @@ This directly resolves the "would require deciding how to roll up two different-
 
 **Reasoning:** Separates "how a real muscle rolls up to what the current renderer can paint" (a rendering-technology limitation) from "what does this exercise actually train" (a fact about anatomy) — if body-highlighter is ever swapped again, only `MUSCLE_TO_REGIONS` needs updating, not the whole exercise database. Also fixes the `muscleGroup` filter pills' old "Legs" bucketing hack (`LEG_MUSCLES.includes(...)` in `js/exercises.js`) for free, since `muscleGroup` now equals the filter value directly — filter pills expanded from 4 to all 6 groups (Arms and Core previously had no dedicated pill).
 
+### Continuous heatmap gradient — RESOLVED 2026-07-12
+**Decision:** Replaced the 3-bucket warm/hot/max tier system with a 40-step interpolated gradient. Ryan's complaint was concrete: one bench press set and five bicep curl sets could both round into the same "warm" bucket and paint chest and biceps identically, even though they're obviously not the same amount of training. body-highlighter colours a region by counting synthetic entries in its `data` array and indexing `highlightedColors[frequency - 1]` (confirmed by reading the library's own source, `body-highlighter@3.0.2/dist/body-highlighter.esm.js`) — critically, that index is **clamped to the array's length**, not hardcoded to expect exactly 3 colours. So `js/heatmap.js` now builds a 40-colour array (`buildGradient()`, piecewise-linear RGB interpolation across the same 4 named tokens: cold → warm → hot → max) and picks `Math.max(1, Math.round(normalized * 40))` synthetic entries per region instead of a 3-way tier lookup — same mechanism as before (the library's public `data`/`highlightedColors` API, no fork, no low-level DOM patching), just finer-grained. The gradient's first and last colours land exactly on the named cold/max tokens, so the endpoints are pixel-identical to before; only the space between them changed from 2 hard jumps to a smooth ramp.
+
+**Verified live (2026-07-12):** logged 1 set of Barbell Bench Press + 5 sets of Barbell Curl (Ryan's own example). Biceps normalized to 1.0 (exact `--color-heat-max` red, the session's peak) while chest normalized to 0.11 — a distinctly different, much cooler shade, confirmed by reading the actual rendered `<polygon>` fill colours and cross-checking by hand against `buildGradient()`'s math. Previously both would have landed in the "warm" bucket and painted identically.
+
+**Trade-off, accepted:** still discrete, not truly continuous — body-highlighter has no per-pixel/per-shape arbitrary-fill API, only frequency-indexed colours, so two values within about 1/40th (2.5%) of each other can still round to the same step (seen live: triceps at 0.05 and front-deltoids at 0.04 shared a colour in the same test). 40 steps was picked as comfortably below the threshold where quantization is visually noticeable, at negligible cost (worst case ~20 regions × 40 tiny synthetic objects, rebuilt only on `paintHeatmap()`, not per frame) — not tuned against real usage data yet, may revisit.
+
+**`js/heat.js`'s `tier()` removed** — it was single-purpose (only `js/heatmap.js`'s tier→colour lookup used it) and is now dead code with the tier system gone. `normalize()` is untouched; it already just produces the 0-1 values the gradient reads.
+
 ---
 
 ## Logging
@@ -226,9 +235,8 @@ calculation), logged per this file's usual practice.
 **Decision:** The heat formula's `emphasis` term (`docs/data-model.md` "Heat calculation") only has explicit values in `muscles.advanced`. For `muscles.simple`, which only has a `role`, emphasis defaults to 1.0 for `"primary"` and 0.5 for `"secondary"`.
 **Reasoning:** Matches the existing data-model note that "secondary muscles render at a lighter tint" — translates that intent into the actual math rather than leaving secondary muscles weighted equally to primary ones.
 
-### Heat tier thresholds — RESOLVED 2026-06-30
-**Decision:** Normalised heat values map to the 4 existing CSS tiers as: 0 → cold, 0–0.33 → warm, 0.33–0.66 → hot, 0.66–1 → max (even thirds).
-**Reasoning:** `data-model.md` only specifies the 0/1 endpoints and that intermediate values pass through amber/orange — no exact cutoffs given. An even split is the simplest default; revisit once there's a feel for how it looks across a real range of muscle heat values.
+### ~~Heat tier thresholds~~ — superseded 2026-07-12
+~~Decision: Normalised heat values map to the 4 existing CSS tiers as: 0 → cold, 0–0.33 → warm, 0.33–0.66 → hot, 0.66–1 → max (even thirds).~~ Superseded by "Continuous heatmap gradient" below, once it became clear 3 buckets made meaningfully-different training amounts (e.g. one bench press set vs. five bicep curl sets) paint identically whenever they landed in the same third.
 
 ### Exercise detail sheet muscle breakdown — RESOLVED 2026-06-30
 **Decision:** The exercise-detail bottom sheet always shows `muscles.simple`, regardless of the Heatmap screen's Simple/Advanced toggle state.

@@ -182,6 +182,20 @@ components instead.
   re-checked at 375px width with the icons at their new size — still no
   overflow, since the row had more spare width than it needed.
 
+## Done (2026-07-12) — continuous heatmap gradient
+
+- The heatmap no longer buckets normalized heat into 3 discrete
+  warm/hot/max colours — `js/heatmap.js`'s new `buildGradient()`
+  interpolates the same 4 named tokens (cold/warm/hot/max) into a
+  40-step colour ramp, and `paintHeatmap()` picks a step by rounding
+  the normalized value instead of doing a 3-way tier lookup. Works
+  entirely through body-highlighter's existing public API (it indexes
+  `highlightedColors[frequency - 1]`, clamped to the array's length —
+  no fork, no DOM patching needed). `js/heat.js`'s now-unused `tier()`
+  was removed. See `docs/decisions.md` "Continuous heatmap gradient"
+  for the live-verified example (1 bench press set vs. 5 bicep curl
+  sets, previously identical, now visibly different).
+
 ---
 
 ## Not yet built

@@ -14,15 +14,52 @@
 
 import createBodyHighlighter from 'https://unpkg.com/body-highlighter@3/dist/body-highlighter.esm.js';
 import { loadLogs } from './data.js';
-import { computeRawHeat, computeMuscleHeat, normalize, tier, daysAgo, recencyWeight } from './heat.js';
+import { computeRawHeat, computeMuscleHeat, normalize, daysAgo, recencyWeight } from './heat.js';
 import { MUSCLE_TO_REGIONS } from './muscle-taxonomy.js';
 import { formatMuscleName } from './utils.js';
 
 // The library colours a muscle by counting how many entries in its `data`
-// array mention it (that's "frequency"), not by a continuous value — so
-// each heat tier maps to how many synthetic entries to generate for it.
-// cold -> 0 entries (falls back to bodyColor).
-const TIER_TO_FREQUENCY = { cold: 0, warm: 1, hot: 2, max: 3 };
+// array mention it (that's "frequency"), not by a continuous value — so a
+// normalized 0-1 heat value has to become a whole number of synthetic
+// entries. body-highlighter indexes highlightedColors[frequency - 1],
+// clamped to the array's own length rather than requiring exactly 3
+// entries — so handing it a much longer array of finely-interpolated
+// colours (buildGradient() below) turns what used to be 3 visible buckets
+// into a near-continuous ramp, entirely through the library's existing
+// public API. See docs/decisions.md "Continuous heatmap gradient."
+const GRADIENT_STEPS = 40;
+
+function hexToRgb(hex) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function rgbToHex([r, g, b]) {
+  return '#' + [r, g, b].map((c) => Math.round(c).toString(16).padStart(2, '0')).join('');
+}
+
+// Piecewise-linear interpolation across an arbitrary number of colour
+// stops, producing `steps` evenly-spaced hex colours along that ramp.
+// Used to turn the 4 named thermal tokens (cold/warm/hot/max) into a long
+// gradient array — the first and last generated colours land exactly on
+// the first and last stops, so the ramp's endpoints still match the named
+// tokens exactly; only the space between them is now continuous rather
+// than jumping straight from one named colour to the next.
+function buildGradient(stops, steps) {
+  const stopRgb = stops.map(hexToRgb);
+  const colors = [];
+  for (let i = 0; i < steps; i++) {
+    const t = steps === 1 ? 0 : i / (steps - 1); // 0..1 across the whole ramp
+    const segment = t * (stopRgb.length - 1);
+    const idx = Math.min(Math.floor(segment), stopRgb.length - 2);
+    const localT = segment - idx;
+    const from = stopRgb[idx];
+    const to = stopRgb[idx + 1];
+    const rgb = from.map((channel, c) => channel + (to[c] - channel) * localT);
+    colors.push(rgbToHex(rgb));
+  }
+  return colors;
+}
 
 const frontContainer = document.querySelector('.body-view[data-view="front"]');
 const backContainer = document.querySelector('.body-view[data-view="back"]');
@@ -67,9 +104,7 @@ export async function initHeatmap(exerciseData, { onQuickAdd: onQuickAddCb } = {
   onQuickAdd = onQuickAddCb || null;
 
   const colors = readThermalColors();
-  // The library colours by array index (frequency - 1), so order matters
-  // here: index 0 = warm, 1 = hot, 2 = max.
-  const highlightedColors = [colors.warm, colors.hot, colors.max];
+  const highlightedColors = buildGradient([colors.cold, colors.warm, colors.hot, colors.max], GRADIENT_STEPS);
   const svgStyle = { width: '100%', height: 'auto' };
   const onClick = ({ muscle }) => handleRegionClick(muscle);
 
@@ -118,12 +153,20 @@ export function paintHeatmap() {
   // each one only has SVG regions for the muscles visible from its own
   // view (e.g. biceps has no posterior region), so it naturally ignores
   // anything that doesn't apply to it.
+  //
+  // A normalized value has to become a whole number of entries — rounded
+  // to the nearest of GRADIENT_STEPS rather than bucketed into 3 tiers, so
+  // two different amounts of training only render identically if they're
+  // within about a GRADIENT_STEPS-th of each other, not within a third.
+  // Math.max(1, ...) keeps any nonzero value visibly above bodyColor even
+  // if it rounds down to 0 — only an exact 0 (untrained) stays at bodyColor.
   const libraryData = [];
   Object.keys(normalized).forEach((group) => {
-    const frequency = TIER_TO_FREQUENCY[tier(normalized[group])];
-    if (frequency === 0) return; // cold — leave at bodyColor, nothing to add
+    const value = normalized[group];
+    if (!value) return; // untrained — leave at bodyColor, nothing to add
 
-    for (let i = 0; i < frequency; i++) {
+    const steps = Math.max(1, Math.round(value * GRADIENT_STEPS));
+    for (let i = 0; i < steps; i++) {
       libraryData.push({ name: `${group}-${i}`, muscles: [group] });
     }
   });

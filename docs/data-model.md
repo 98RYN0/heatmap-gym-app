@@ -86,7 +86,7 @@ per-muscle precision on the heatmap itself.
 - Raw region-heat values are normalised across all regions to a 0–1 scale
 - 0 maps to dark grey (untrained)
 - 1 maps to red (most trained)
-- Intermediate values map through amber → orange on the thermal scale
+- Intermediate values map through a continuous 40-step gradient across amber → orange → red (`js/heatmap.js`'s `buildGradient()`) — not 3 discrete bands. See `docs/decisions.md` "Continuous heatmap gradient" for why: a 3-bucket system made meaningfully different training amounts (e.g. one exercise's single set vs. another's five sets) paint identically whenever they rounded into the same bucket.
 
 *Note: formula flagged for revisiting post-MVP.*
 

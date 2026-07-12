@@ -105,8 +105,9 @@ export function computeRawHeat(logs, exercises) {
 }
 
 // Scales raw heat values so the highest-heat muscle is 1.0 and everything
-// else is relative to it — that's what tier() and the heatmap colours are
-// keyed off, rather than raw unbounded numbers.
+// else is relative to it — that's what the heatmap's colour gradient
+// (js/heatmap.js's buildGradient()) is keyed off, rather than raw
+// unbounded numbers.
 export function normalize(rawHeat) {
   const values = Object.values(rawHeat);
   const max = values.length ? Math.max(...values) : 0;
@@ -117,14 +118,4 @@ export function normalize(rawHeat) {
     normalized[group] = value / max;
   });
   return normalized;
-}
-
-// Buckets a normalized 0-1 heat value into one of 4 colour tiers, which
-// heatmap.js maps to actual colours for the body-highlighter library.
-// Even thirds above 0 — see docs/decisions.md "Heat tier thresholds" for why.
-export function tier(value) {
-  if (!value) return 'cold';
-  if (value <= 0.33) return 'warm';
-  if (value <= 0.66) return 'hot';
-  return 'max';
 }

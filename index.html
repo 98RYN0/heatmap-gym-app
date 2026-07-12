@@ -121,11 +121,28 @@
 
         </main>
 
+        <!-- Icons are Tabler's outline set (MIT), inlined as raw SVG rather
+             than pulled from a CDN — there are only 4 of them, so embedding
+             costs nothing and keeps the nav working offline. stroke="currentColor"
+             means each icon automatically follows .nav-item's own text
+             colour (muted vs. accent when .active) with no extra CSS. -->
         <nav class="bottom-nav">
-            <button class="nav-item active" data-target="heatmap">Heatmap</button>
-            <button class="nav-item" data-target="log">Log</button>
-            <button class="nav-item" data-target="exercises">Exercises</button>
-            <button class="nav-item" data-target="history">History</button>
+            <button class="nav-item active" data-target="heatmap">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10.941c2.333 -3.308 .167 -7.823 -1 -8.941c0 3.395 -2.235 5.299 -3.667 6.706c-1.43 1.408 -2.333 3.294 -2.333 5.588c0 3.704 3.134 6.706 7 6.706c3.866 0 7 -3.002 7 -6.706c0 -1.712 -1.232 -4.403 -2.333 -5.588c-2.084 3.353 -3.257 3.353 -4.667 2.235" /></svg>
+                <span class="nav-label">Heatmap</span>
+            </button>
+            <button class="nav-item" data-target="log">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 5a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2" /><path d="M9 12l.01 0" /><path d="M13 12l2 0" /><path d="M9 16l.01 0" /><path d="M13 16l2 0" /></svg>
+                <span class="nav-label">Log</span>
+            </button>
+            <button class="nav-item" data-target="exercises">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h1" /><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2" /><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1" /><path d="M9 12h6" /><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1" /><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2" /><path d="M22 12h-1" /></svg>
+                <span class="nav-label">Exercises</span>
+            </button>
+            <button class="nav-item" data-target="history">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                <span class="nav-label">History</span>
+            </button>
         </nav>
 
         <!-- Shared exercise-detail bottom sheet — one instance reused for

@@ -196,11 +196,22 @@ components instead.
   for the live-verified example (1 bench press set vs. 5 bicep curl
   sets, previously identical, now visibly different).
 
+## Done (2026-07-12, later same day) — bottom nav icons
+
+- Each bottom-nav button now shows a Tabler outline icon above its
+  existing text label (icon + label, not icon replacing label — Ryan was
+  explicit about keeping both). Icons are Tabler's real SVGs (MIT),
+  inlined directly in `index.html` rather than pulled from a CDN, since
+  there are only 4 and embedding costs nothing. `stroke="currentColor"`
+  means each icon automatically follows `.nav-item`'s own colour (muted
+  vs. accent when active) with no extra CSS. The nav grew from ~30px to
+  ~77px tall to fit icon + label comfortably, so `.screens`'
+  `padding-bottom` was bumped from 80px to 100px to keep clearing it.
+
 ---
 
 ## Not yet built
 
-- **Nav icons** — Tabler outline set, replacing the current text labels
 - **Light mode** — `[data-theme="light"]` token overrides + a toggle
 - **Training balance card** — push/pull or upper/lower split, per
   `docs/decisions.md`'s "Heatmap home screen — secondary content" decision

@@ -165,6 +165,11 @@ At most one set across the whole session can be mid-edit at once, tracked by a s
 ### Navigation
 - Bottom tab bar, 4 tabs: Heatmap, Log, Exercises, History
 
+### Bottom nav icons — RESOLVED 2026-07-12
+**Decision:** Added a Tabler outline icon above each nav label — flame (Heatmap, matching the thermal colour language already used for heat), clipboard-list (Log), barbell (Exercises), history (History). Icons sit *alongside* the existing text labels, not replacing them — Ryan was explicit that both should stay, unlike the "replacing the current text labels" framing the roadmap backlog item had used. Icons are Tabler's real SVGs (MIT licensed), inlined directly as raw `<svg>` markup in `index.html` rather than pulled from a CDN or icon font — only 4 are needed, so embedding them costs nothing and keeps the nav working without a network request, unlike `body-highlighter`'s CDN import (which has to be a CDN import, since it's a whole rendering library, not 4 static icons). Each icon uses `stroke="currentColor"`, so it automatically tracks `.nav-item`'s own text colour (muted vs. accent when `.active`) with zero extra CSS — no separate active-icon-colour rule needed.
+
+**Reasoning for taller nav:** icon + label needs more vertical room than a label alone — `.nav-item` grew from ~30px to ~77px tall (padding bumped from `--space-sm` all round to `--space-md`/`--space-sm`, gap from a hardcoded `2px` to `--space-xs`). `.screens`' `padding-bottom` (which exists purely to keep scrollable content from sitting under the fixed nav) was bumped from 80px to 100px to match, checked live against the Heatmap screen's CTA button to confirm no overlap.
+
 ### Home screen
 - Heatmap is the hero element
 - Contextual callout cards above the heatmap (e.g. "Rear delts — 9 days since last trained", "Chest — most trained, 3 sessions")

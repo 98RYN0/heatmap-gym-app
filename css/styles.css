@@ -49,7 +49,7 @@ button:focus-visible {
 }
 
 .screens {
-  padding-bottom: 80px; /* clears the fixed bottom nav */
+  padding-bottom: 100px; /* clears the fixed bottom nav, now taller with icons */
 }
 
 /* Topbar — shared across screens */
@@ -148,11 +148,11 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: var(--space-xs);
   background: none;
   border: none;
   cursor: pointer;
-  padding: var(--space-sm);
+  padding: var(--space-md) var(--space-sm);
   color: var(--color-text-muted);
   font-size: var(--font-size-label);
 }
@@ -163,6 +163,14 @@ button:focus-visible {
 
 .nav-item.active {
   color: var(--color-accent);
+}
+
+/* stroke="currentColor" on the inlined Tabler SVGs (index.html) means the
+   icon always matches .nav-item's own text colour (muted vs. accent) with
+   no extra selector needed here — this rule only controls size. */
+.nav-icon {
+  width: 24px;
+  height: 24px;
 }
 
 /* Heatmap screen */

@@ -7,7 +7,7 @@
 // "+ Add exercise" -> Exercises tab -> pick one -> back here flow.
 
 import { addLog } from './data.js';
-import { todayDateString, formatSetRow } from './utils.js';
+import { todayDateString } from './utils.js';
 
 const sessionList = document.querySelector('.session-list');
 const addExerciseBtn = document.getElementById('add-exercise-btn');
@@ -17,6 +17,11 @@ let exercisesById = new Map(); // built once from the exercise list for O(1) loo
 let currentSession = { exercises: [] };
 let switchTabFn = null; // injected from app.js so this module can navigate without importing app.js
 let onFinished = null; // callback app.js uses to repaint the heatmap/history after a session is saved
+// At most one set across the whole session can be mid-edit at a time —
+// tracked by object reference (which exercise entry, which index into its
+// sets array) rather than a per-card flag, since cards are thrown away and
+// rebuilt on every renderSession() call anyway.
+let editingSet = null; // { entry, index } | null
 
 export function initLog(exercises, { switchTab, onFinished: onFinishedCb } = {}) {
   exercisesById = new Map(exercises.map((ex) => [ex.id, ex]));
@@ -62,9 +67,9 @@ function renderSession() {
 function buildExerciseCard(entry) {
   const exercise = exercisesById.get(entry.exerciseId);
   // Bodyweight exercises (Push-Up, Pull-Up, Plank, ...) have no meaningful
-  // load to log — weight is left out of the form entirely rather than
-  // shown and ignored, so sets for these exercises never get a `weight`
-  // field at all (see formatSetRow() in utils.js for the display side).
+  // load to log — weight is left out of the add-set form and the per-set
+  // edit form alike, so sets for these exercises never get a `weight`
+  // field at all (see buildSetRowHTML() below for the display side).
   const isBodyweight = exercise.equipment.includes('bodyweight');
 
   const li = document.createElement('li');
@@ -78,7 +83,7 @@ function buildExerciseCard(entry) {
       <button class="remove-exercise-btn icon-button" aria-label="Remove exercise" title="Remove exercise">✕</button>
     </div>
     <div class="set-rows">
-      ${entry.sets.map((set, i) => formatSetRow(set, i)).join('')}
+      ${entry.sets.map((set, i) => buildSetRowHTML(entry, isBodyweight, i)).join('')}
     </div>
     <div class="set-form">
       <input type="number" class="set-input" data-field="reps" placeholder="Reps" min="0">
@@ -99,6 +104,7 @@ function buildExerciseCard(entry) {
   // here: nothing's been saved yet, so there's nothing destructive to guard.
   li.querySelector('.remove-exercise-btn').addEventListener('click', () => {
     currentSession.exercises = currentSession.exercises.filter((e) => e !== entry);
+    if (editingSet && editingSet.entry === entry) editingSet = null; // was mid-edit on a set that just left with the exercise
     renderSession();
   });
 
@@ -117,7 +123,77 @@ function buildExerciseCard(entry) {
     renderSession(); // re-render clears the inputs and shows the new set row
   });
 
+  // One delegated listener covers every set row's duplicate/edit/save/
+  // cancel/remove button — same pattern as history.js's list delegation —
+  // rather than attaching a listener per button per row.
+  li.querySelector('.set-rows').addEventListener('click', (e) => {
+    const row = e.target.closest('.set-row');
+    if (!row) return;
+    const index = Number(row.dataset.setIndex);
+
+    if (e.target.closest('.duplicate-set-btn')) {
+      entry.sets.splice(index + 1, 0, { ...entry.sets[index] });
+      renderSession();
+    } else if (e.target.closest('.edit-set-btn')) {
+      editingSet = { entry, index };
+      renderSession();
+    } else if (e.target.closest('.remove-set-btn')) {
+      entry.sets.splice(index, 1);
+      if (editingSet && editingSet.entry === entry && editingSet.index === index) editingSet = null;
+      renderSession();
+    } else if (e.target.closest('.cancel-edit-btn')) {
+      editingSet = null;
+      renderSession();
+    } else if (e.target.closest('.save-set-btn')) {
+      const repsVal = row.querySelector('[data-edit-field="reps"]').value;
+      const rpeVal = row.querySelector('[data-edit-field="rpe"]').value;
+      const editWeightInput = row.querySelector('[data-edit-field="weight"]');
+      if (!repsVal || !rpeVal || (editWeightInput && !editWeightInput.value)) return;
+      const updated = { reps: Number(repsVal), rpe: Number(rpeVal) };
+      if (editWeightInput) updated.weight = Number(editWeightInput.value);
+      entry.sets[index] = updated;
+      editingSet = null;
+      renderSession();
+    }
+  });
+
   return li;
+}
+
+// One logged set's row within the active session: either its normal
+// display form (reps/weight/RPE text + duplicate/edit/remove icons), or,
+// if it's the one set currently being edited, an inline form pre-filled
+// with its current values. Unlike utils.js's formatSetRow() (used by the
+// read-only History detail sheet), this one is interactive and specific
+// to the in-progress session, so it stays local to this module.
+function buildSetRowHTML(entry, isBodyweight, index) {
+  const set = entry.sets[index];
+
+  if (editingSet && editingSet.entry === entry && editingSet.index === index) {
+    return `
+      <div class="set-row set-row-editing" data-set-index="${index}">
+        <input type="number" class="set-input" data-edit-field="reps" value="${set.reps}" min="0">
+        ${isBodyweight ? '' : `<input type="number" class="set-input" data-edit-field="weight" value="${set.weight}" min="0" step="0.5">`}
+        <input type="number" class="set-input" data-edit-field="rpe" value="${set.rpe}" min="1" max="10">
+        <button class="set-action-btn save-set-btn" aria-label="Save set" title="Save set">✓</button>
+        <button class="set-action-btn cancel-edit-btn" aria-label="Cancel edit" title="Cancel edit">✕</button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="set-row" data-set-index="${index}">
+      <span>#${index + 1}</span>
+      <span>${set.reps} reps</span>
+      ${set.weight != null ? `<span>${set.weight} kg</span>` : ''}
+      <span>RPE ${set.rpe}</span>
+      <span class="set-row-actions">
+        <button class="set-action-btn duplicate-set-btn" aria-label="Duplicate set" title="Duplicate set">⧉</button>
+        <button class="set-action-btn edit-set-btn" aria-label="Edit set" title="Edit set">✎</button>
+        <button class="set-action-btn remove-set-btn" aria-label="Remove set" title="Remove set">✕</button>
+      </span>
+    </div>
+  `;
 }
 
 // Persists the session, resets state, and hands control back to the
@@ -129,6 +205,7 @@ function finishSession() {
   currentSession.date = todayDateString();
   addLog(currentSession);
   currentSession = { exercises: [] };
+  editingSet = null;
   renderSession();
 
   if (onFinished) onFinished(); // repaints heatmap + history with the new data

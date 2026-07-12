@@ -162,6 +162,17 @@ components instead.
   `formatSetRow()` helper in `js/utils.js` so both views stay in sync.
   See `docs/decisions.md` "Bodyweight exercises don't ask for weight."
 
+## Done (2026-07-11, later still again again) — duplicate/edit/remove a single logged set
+
+- Each set in the active Log screen session now has duplicate (⧉), edit
+  (✎), and remove (✕) icons — duplicating inserts an identical copy right
+  after (handy for repeated warm-up sets), edit turns the row into an
+  inline pre-filled form (save ✓ / cancel ✕), and remove drops just that
+  set rather than the whole exercise. Scoped to the in-progress session
+  only — History's saved logs are still read-only/delete-the-whole-log.
+  See `docs/decisions.md` "Per-set duplicate/edit/remove in the active
+  session."
+
 ---
 
 ## Not yet built

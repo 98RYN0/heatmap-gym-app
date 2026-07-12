@@ -395,9 +395,44 @@ button:focus-visible {
 
 .set-row {
   display: flex;
+  align-items: center;
   gap: var(--space-md);
   font-size: var(--font-size-label);
   color: var(--color-text-muted);
+}
+
+/* Editing a set reuses .set-row's flex layout but swaps the text/icons for
+   inputs (styled like .set-form's, just smaller-gapped to fit alongside
+   the save/cancel icons) — keeps the row's height stable rather than
+   popping a separate form open below it. */
+.set-row-editing {
+  gap: var(--space-xs);
+}
+
+.set-row-actions {
+  display: flex;
+  gap: var(--space-xs);
+  margin-left: auto; /* pushes the icon group to the row's right edge, mirroring .exercise-card-header's space-between */
+}
+
+.set-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.set-action-btn:hover {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+}
+
+.save-set-btn {
+  color: var(--color-accent);
 }
 
 .set-form {

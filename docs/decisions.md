@@ -137,6 +137,13 @@ Since both the Log screen's active session cards and History's read-only log det
 
 **Scope boundary:** doesn't handle weighted bodyweight variants (e.g. a weighted pull-up with a dip belt) — no exercise in the current database is tagged as needing both a bodyweight-style entry and an optional added-weight field, so that's not built. If one's added later, it'd need its own equipment tag (e.g. `"weighted-bodyweight"`) rather than overloading `"bodyweight"`.
 
+### Per-set duplicate/edit/remove in the active session — RESOLVED 2026-07-11
+**Decision:** Each logged set in the active Log screen session (not History's read-only view — see below) now has three icons: **duplicate** (⧉, inserts an identical copy directly after — the concrete case that prompted this: three warm-up sets at the same reps/weight, log one, then just duplicate it twice), **edit** (✎, turns that one row into an inline form pre-filled with its current values), and **remove** (✕, deletes just that set, not the whole exercise). Editing reuses the same reps/weight(if applicable)/RPE inputs and validation as adding a new set — weight is still skipped for bodyweight exercises (previous entry) — and replaces the set in place via `entry.sets[index] = updated`, so its position in the list doesn't change. A save (✓) commits it; cancel (✕) discards the edit and restores the original row untouched.
+
+At most one set across the whole session can be mid-edit at once, tracked by a single module-level `editingSet = { entry, index } | null` in `log.js` rather than a per-row flag — simple because `renderSession()` already throws away and rebuilds every card on any change, so there's nowhere for stale per-row state to live anyway. Explicitly cleared when it'd otherwise go stale: the exercise it belongs to gets removed, the set itself gets removed, or the whole session finishes.
+
+**Reasoning:** Previously the only way to correct a logged set was deleting the entire exercise card and re-adding it — reasonable for "I added the wrong exercise" (still handled by the exercise-level ✕ from the previous session's work) but heavy-handed for "I mistyped one number" or "I want three identical warm-up sets." This is scoped to the *in-progress* session only, same boundary as the exercise-level remove button above — History's already-saved logs stay read-only (delete-the-whole-log is still the only mutation there, see "View + delete a logged workout"), so `utils.js`'s shared `formatSetRow()` (used by History) was left untouched; this instead got its own `buildSetRowHTML()` local to `log.js`, since the interactive controls have no read-only equivalent to share.
+
 ---
 
 ## UI / UX

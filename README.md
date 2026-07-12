@@ -71,7 +71,10 @@ js/                  ES modules, loaded via <script type="module">
 data/
   exercises.json     Exercise database matching docs/data-model.md's schema
 assets/
-  icon.svg           App/PWA icon
+  app_icon.png       Full-resolution source icon (1254x1254), Ryan-provided
+  icon-192.png       App/PWA icon — manifest.json + favicon
+  icon-512.png       App/PWA icon — manifest.json (larger/maskable use)
+  icon-180.png       App/PWA icon — apple-touch-icon (iOS homescreen)
   legacy/            Superseded hand-drawn body SVGs, unused — see assets/README.md
 docs/
   decisions.md       Product + design decisions log, with reasoning

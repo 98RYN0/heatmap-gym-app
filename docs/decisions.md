@@ -170,6 +170,11 @@ At most one set across the whole session can be mid-edit at once, tracked by a s
 
 **Reasoning for taller nav:** icon + label needs more vertical room than a label alone — `.nav-item` grew from ~30px to ~77px tall (padding bumped from `--space-sm` all round to `--space-md`/`--space-sm`, gap from a hardcoded `2px` to `--space-xs`). `.screens`' `padding-bottom` (which exists purely to keep scrollable content from sitting under the fixed nav) was bumped from 80px to 100px to match, checked live against the Heatmap screen's CTA button to confirm no overlap.
 
+### Real app icon — RESOLVED 2026-07-13
+**Decision:** Replaced the placeholder `assets/icon.svg` (a bootstrap-era generated silhouette) with the real icon Ryan supplied (`assets/app_icon.png`, 1254×1254 — the same heated-chest/thermal visual language as the rest of the app). Since manifest icon guidance expects accurate `sizes` per file rather than one oversized image, generated `icon-192.png` and `icon-512.png` (manifest.json's two icon entries, both `purpose: "any"`) plus `icon-180.png` (the size iOS specifically expects for `apple-touch-icon`) from the source via .NET's `System.Drawing` in a one-off PowerShell script — no image-processing package needed for a one-time resize, consistent with this project's "no build step, no npm install" stance elsewhere. Also cut the 512px version's file size from the source's 1.4MB down to ~324KB in the process.
+
+Added `<link rel="apple-touch-icon">` alongside the existing favicon `<link>` — iOS Safari's "Add to Home Screen" reads that tag specifically rather than the manifest's `icons` array (which is what Android/Chrome uses), so without it the homescreen icon would silently fall back to a screenshot of the page instead of this icon. The original full-res PNG is kept as `assets/app_icon.png` (source of truth, not referenced directly anywhere) rather than deleted, in case a size needs regenerating later. `assets/icon.svg` was deleted outright rather than moved to `assets/legacy/` — that folder is for superseded assets kept as reference (the old hand-drawn body SVGs, still structurally interesting); the placeholder icon has no such value now that a real one exists.
+
 ### Home screen
 - Heatmap is the hero element
 - Contextual callout cards above the heatmap (e.g. "Rear delts — 9 days since last trained", "Chest — most trained, 3 sessions")

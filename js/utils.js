@@ -24,3 +24,12 @@ export function todayDateString() {
   const day = String(now.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+
+// One logged set's markup — shared by log.js (active session) and
+// history.js (read-only log detail), so the two views can't drift apart.
+// Bodyweight sets have no `weight` field at all (see log.js's
+// buildExerciseCard), so that column is left out rather than showing "kg".
+export function formatSetRow(set, index) {
+  const weightPart = set.weight != null ? `<span>${set.weight} kg</span>` : '';
+  return `<div class="set-row"><span>#${index + 1}</span><span>${set.reps} reps</span>${weightPart}<span>RPE ${set.rpe}</span></div>`;
+}

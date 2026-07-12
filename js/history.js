@@ -5,7 +5,7 @@
 // screen is already "your training data over time."
 
 import { loadLogs, exportLogs, importLogs, deleteLog } from './data.js';
-import { capitalize, todayDateString } from './utils.js';
+import { capitalize, todayDateString, formatSetRow } from './utils.js';
 
 const listView = document.querySelector('.history-view[data-view="list"]');
 const calendarView = document.querySelector('.history-view[data-view="calendar"]');
@@ -174,13 +174,7 @@ function openLogDetailSheet(log) {
         <span class="exercise-meta">${exercise ? exercise.muscleGroup : ''}</span>
       </div>
       <div class="set-rows">
-        ${entry.sets
-          .map(
-            (set, i) => `
-          <div class="set-row"><span>#${i + 1}</span><span>${set.reps} reps</span><span>${set.weight} kg</span><span>RPE ${set.rpe}</span></div>
-        `
-          )
-          .join('')}
+        ${entry.sets.map((set, i) => formatSetRow(set, i)).join('')}
       </div>
     `;
     logSheetList.appendChild(li);

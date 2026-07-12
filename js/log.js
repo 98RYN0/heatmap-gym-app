@@ -7,7 +7,7 @@
 // "+ Add exercise" -> Exercises tab -> pick one -> back here flow.
 
 import { addLog } from './data.js';
-import { todayDateString } from './utils.js';
+import { todayDateString, formatSetRow } from './utils.js';
 
 const sessionList = document.querySelector('.session-list');
 const addExerciseBtn = document.getElementById('add-exercise-btn');
@@ -61,6 +61,11 @@ function renderSession() {
 // far, plus an inline reps/weight/RPE form to add another.
 function buildExerciseCard(entry) {
   const exercise = exercisesById.get(entry.exerciseId);
+  // Bodyweight exercises (Push-Up, Pull-Up, Plank, ...) have no meaningful
+  // load to log — weight is left out of the form entirely rather than
+  // shown and ignored, so sets for these exercises never get a `weight`
+  // field at all (see formatSetRow() in utils.js for the display side).
+  const isBodyweight = exercise.equipment.includes('bodyweight');
 
   const li = document.createElement('li');
   li.className = 'exercise-card';
@@ -73,24 +78,18 @@ function buildExerciseCard(entry) {
       <button class="remove-exercise-btn icon-button" aria-label="Remove exercise" title="Remove exercise">✕</button>
     </div>
     <div class="set-rows">
-      ${entry.sets
-        .map(
-          (set, i) => `
-        <div class="set-row"><span>#${i + 1}</span><span>${set.reps} reps</span><span>${set.weight} kg</span><span>RPE ${set.rpe}</span></div>
-      `
-        )
-        .join('')}
+      ${entry.sets.map((set, i) => formatSetRow(set, i)).join('')}
     </div>
     <div class="set-form">
       <input type="number" class="set-input" data-field="reps" placeholder="Reps" min="0">
-      <input type="number" class="set-input" data-field="weight" placeholder="kg" min="0" step="0.5">
+      ${isBodyweight ? '' : '<input type="number" class="set-input" data-field="weight" placeholder="kg" min="0" step="0.5">'}
       <input type="number" class="set-input" data-field="rpe" placeholder="RPE" min="1" max="10">
       <button class="add-set-btn">+ Add set</button>
     </div>
   `;
 
   const repsInput = li.querySelector('[data-field="reps"]');
-  const weightInput = li.querySelector('[data-field="weight"]');
+  const weightInput = li.querySelector('[data-field="weight"]'); // null for bodyweight exercises
   const rpeInput = li.querySelector('[data-field="rpe"]');
 
   // Drops the exercise (and any sets already logged for it) from the
@@ -107,12 +106,14 @@ function buildExerciseCard(entry) {
   // so this listener is safe to attach fresh each time — no risk of
   // stacking duplicate listeners on a stale element.
   li.querySelector('.add-set-btn').addEventListener('click', () => {
-    if (!repsInput.value || !weightInput.value || !rpeInput.value) return; // require all three fields
-    entry.sets.push({
+    // Weight is only required when there's a weight field to fill in.
+    if (!repsInput.value || !rpeInput.value || (weightInput && !weightInput.value)) return;
+    const set = {
       reps: Number(repsInput.value),
-      weight: Number(weightInput.value),
       rpe: Number(rpeInput.value),
-    });
+    };
+    if (weightInput) set.weight = Number(weightInput.value);
+    entry.sets.push(set);
     renderSession(); // re-render clears the inputs and shows the new set row
   });
 

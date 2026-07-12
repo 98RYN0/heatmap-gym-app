@@ -128,6 +128,15 @@ Required restructuring `buildExerciseCard`'s header markup slightly: `exercise-n
 
 **Reasoning:** Distinct from (and simpler than) History's delete flow — this corrects an accidental add before anything is saved, not a persisted-data deletion. Prompted directly by testing: added Push-Up to a session by mistake with no way to back out short of finishing the whole session or reloading the page.
 
+### Bodyweight exercises don't ask for weight — RESOLVED 2026-07-11
+**Decision:** `log.js`'s `buildExerciseCard` checks `exercise.equipment.includes('bodyweight')` and, for those exercises, leaves the weight `<input>` out of the set-entry form entirely (not shown-and-optional — genuinely absent) and doesn't require it to add a set. Sets logged for a bodyweight exercise have no `weight` key at all in storage, rather than `0` or `null` — `0 kg` would misleadingly read as "you logged a weight, it was zero," and the field simply isn't meaningful for e.g. a bodyweight Push-Up or Plank.
+
+Since both the Log screen's active session cards and History's read-only log detail sheet render set rows, and both needed the same "only show kg if it's there" conditional, that rendering moved into one shared `formatSetRow(set, index)` helper (`js/utils.js`) used by both `log.js` and `history.js` — avoids the two views silently drifting apart the way `.exercise-card-header` markup nearly did across three near-duplicate copies already in this codebase.
+
+**Reasoning:** Ryan pointed out the app was forcing a weight value on exercises that plainly don't have one — a real usability gap, not a design nuance. No formula change needed: `heat.js`'s `setHeat` (`reps × rpe / 10`) never used `weight` in the first place, so bodyweight exercises already contributed heat correctly; this only ever affected the logging *form*, not the calculation.
+
+**Scope boundary:** doesn't handle weighted bodyweight variants (e.g. a weighted pull-up with a dip belt) — no exercise in the current database is tagged as needing both a bodyweight-style entry and an optional added-weight field, so that's not built. If one's added later, it'd need its own equipment tag (e.g. `"weighted-bodyweight"`) rather than overloading `"bodyweight"`.
+
 ---
 
 ## UI / UX

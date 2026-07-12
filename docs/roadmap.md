@@ -152,6 +152,16 @@ components instead.
   Finish is pressed — no confirm needed, since nothing's saved yet. See
   `docs/decisions.md` "Remove an exercise from the in-progress session."
 
+## Done (2026-07-11, later still again) — bodyweight exercises skip the weight field
+
+- Logging a set for a bodyweight exercise (equipment tagged `"bodyweight"`
+  — Push-Up, Pull-Up, Plank, etc.) no longer shows or requires a weight
+  input; only reps and RPE are captured. Stored sets for these exercises
+  have no `weight` key at all. Set-row rendering (previously duplicated
+  in `log.js` and `history.js`) was pulled into one shared
+  `formatSetRow()` helper in `js/utils.js` so both views stay in sync.
+  See `docs/decisions.md` "Bodyweight exercises don't ask for weight."
+
 ---
 
 ## Not yet built

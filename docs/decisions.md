@@ -9,6 +9,10 @@ A running record of every product and design decision made, with reasoning. Upda
 ### Target user
 Intuitive lifters — people who go to the gym without a fixed program but have a rough sense of what they want to hit. Specifically targeting people who are *new* to intuitive lifting and need help identifying gaps in their training coverage.
 
+### App name — Atlas — RESOLVED 2026-07-13
+**Decision:** The app's actual identity — `manifest.json`'s `name`/`short_name` (what shows under the icon on a phone's homescreen) and `index.html`'s `<title>` (browser tab) — changed from the placeholder "Heatmap" to "Atlas". The **Heatmap tab/screen itself keeps its name** — it's a distinct in-app feature (the anatomical heatmap), not the app's brand, the same way a fitness app's brand name and its "Dashboard" tab aren't the same thing. Nothing else changed: `js/*.js`, `data/exercises.json`, region ids, CSS classes, and every doc's references to "the Heatmap screen" are all about that feature and were left alone.
+**Not done:** the GitHub repo (`heatmap-gym-app`) and its live Pages URL (`https://98ryn0.github.io/heatmap-gym-app/`) still say "heatmap" — renaming either would break the current published link (GitHub does redirect after a repo rename, but Pages URLs built from the repo name change regardless), so that's left as a separate call for Ryan to make rather than done as a side effect of this one.
+
 ### Core feature loop
 1. Log a workout → select exercises → muscles auto-populate from database
 2. Heatmap updates to reflect recent training volume

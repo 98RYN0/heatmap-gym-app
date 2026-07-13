@@ -1,4 +1,4 @@
-# Heatmap — Muscle Training Tracker
+# Atlas — Muscle Training Tracker
 
 **Live:** https://98ryn0.github.io/heatmap-gym-app/ (GitHub Pages — install
 it to your phone's homescreen to test the PWA experience, see

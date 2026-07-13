@@ -1,6 +1,6 @@
 {
-  "name": "Heatmap — Muscle Training Tracker",
-  "short_name": "Heatmap",
+  "name": "Atlas — Muscle Training Tracker",
+  "short_name": "Atlas",
   "description": "A mobile-first gym tracker whose hero feature is an anatomical heatmap that shows which muscles you've trained recently.",
   "start_url": ".",
   "scope": ".",

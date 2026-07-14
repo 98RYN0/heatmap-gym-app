@@ -158,8 +158,9 @@ region(s) it paints; a few map to more than one region (Soleus → both
 - Workout logs: `localStorage`, key `heatmap_logs` — no backend required
 - Hardened against browser storage eviction (not migrated to a different
   storage API — see `docs/decisions.md` "Harden on-device persistence" for
-  why `localStorage` itself was kept) via `navigator.storage.persist()`,
-  PWA installability (`manifest.json` + `sw.js`), and a manual JSON
-  export/import backup (History screen topbar)
+  why `localStorage` itself was kept) via `navigator.storage.persist()`
+  and PWA installability (`manifest.json` + `sw.js`) — a third layer, a
+  manual JSON export/import backup, was added alongside these and then
+  removed (see `docs/decisions.md` "Export/import backup — REMOVED")
 - Migrate to a real backend (e.g. Supabase) post-MVP if cross-device sync
   or accounts become a goal — single-device persistence doesn't need one

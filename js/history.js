@@ -1,10 +1,9 @@
 // History screen — a reverse-chronological list and a month calendar, both
 // derived from the same localStorage logs (no separate data source). Also
-// owns the manual backup UI (export/import) and the log detail sheet
-// (view/delete a single logged session) — both natural fits since this
-// screen is already "your training data over time."
+// owns the log detail sheet (view/delete a single logged session) — a
+// natural fit since this screen is already "your training data over time."
 
-import { loadLogs, exportLogs, importLogs, deleteLog } from './data.js';
+import { loadLogs, deleteLog } from './data.js';
 import { capitalize, todayDateString, formatSetRow } from './utils.js';
 
 const listView = document.querySelector('.history-view[data-view="list"]');
@@ -14,9 +13,6 @@ const monthLabel = document.querySelector('.calendar-month-label');
 const calendarGrid = document.querySelector('.calendar-grid');
 const prevBtn = document.getElementById('cal-prev');
 const nextBtn = document.getElementById('cal-next');
-const exportBtn = document.getElementById('export-data-btn');
-const importBtn = document.getElementById('import-data-btn');
-const importFileInput = document.getElementById('import-file-input');
 
 const logSheet = document.getElementById('log-detail-sheet');
 const logSheetTitle = logSheet.querySelector('.sheet-title');
@@ -31,7 +27,7 @@ const DOW_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; // Monday-start, matches
 let exercises = [];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth(); // 0-indexed (0 = January), same as the Date API
-let onLogsChanged = null; // callback from app.js — repaints the heatmap, since import/delete both change its data
+let onLogsChanged = null; // callback from app.js — repaints the heatmap, since deleting a log changes its data
 let openLogId = null; // which log the detail sheet is currently showing, for the delete button
 
 // Called once from app.js.
@@ -66,10 +62,6 @@ export function initHistory(exerciseData, { onLogsChanged: onLogsChangedCb } = {
     renderCalendar();
   });
 
-  exportBtn.addEventListener('click', exportLogs);
-  importBtn.addEventListener('click', () => importFileInput.click());
-  importFileInput.addEventListener('change', handleImportFile);
-
   // Delegated click: entries are rebuilt on every render, same pattern as
   // exercises.js's exercise list.
   listView.addEventListener('click', (e) => {
@@ -89,28 +81,6 @@ export function initHistory(exerciseData, { onLogsChanged: onLogsChangedCb } = {
 export function refreshHistory() {
   renderHistoryList();
   if (calendarView.classList.contains('active')) renderCalendar();
-}
-
-// Import replaces everything currently stored, so confirm first — this is
-// one of two destructive actions in the app (the other is deleting a
-// single log, below), native confirm()/alert() are a pragmatic fit rather
-// than building a custom dialog just for these two spots.
-async function handleImportFile(e) {
-  const file = e.target.files[0];
-  importFileInput.value = ''; // reset so re-picking the same file still fires 'change' next time
-  if (!file) return;
-
-  if (!confirm('Import this backup? It will replace all workouts currently saved on this device.')) {
-    return;
-  }
-
-  try {
-    await importLogs(file);
-    refreshHistory();
-    if (onLogsChanged) onLogsChanged();
-  } catch (err) {
-    alert(`Couldn't import that file: ${err.message}`);
-  }
 }
 
 function sessionLabel(log) {

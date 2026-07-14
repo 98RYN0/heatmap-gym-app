@@ -74,34 +74,3 @@ export async function requestPersistentStorage() {
     // Ignore — worst case storage stays evictable, same as before this call.
   }
 }
-
-// Serializes the current logs to a downloadable JSON file — a manual
-// backup that survives even if the browser does evict site storage, or
-// the user gets a new device.
-export function exportLogs() {
-  const logs = loadLogs();
-  const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `heatmap-backup-${new Date().toISOString().split('T')[0]}.json`;
-  link.click();
-
-  URL.revokeObjectURL(url);
-}
-
-// Reads a previously-exported JSON file and replaces the current logs with
-// its contents. Throws on invalid input so the caller (history.js) can
-// show the user what went wrong rather than silently corrupting storage.
-export async function importLogs(file) {
-  const text = await file.text();
-  const logs = JSON.parse(text);
-
-  if (!Array.isArray(logs)) {
-    throw new Error('Backup file is not a valid logs export (expected a JSON array).');
-  }
-
-  saveLogs(logs);
-  return logs;
-}

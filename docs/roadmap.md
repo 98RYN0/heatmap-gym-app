@@ -208,6 +208,15 @@ components instead.
   ~77px tall to fit icon + label comfortably, so `.screens`'
   `padding-bottom` was bumped from 80px to 100px to keep clearing it.
 
+## Done (2026-07-14) — removed export/import backup
+
+- Ryan hadn't asked for the manual JSON export/import backup (added
+  proactively in the 2026-07-11 persistence-hardening pass) and didn't
+  find it useful, so it's gone: the ↓/↑ buttons in the History topbar,
+  and `js/data.js`'s `exportLogs()`/`importLogs()`. `storage.persist()`
+  and PWA installability remain as the app's storage-eviction
+  protection. See `docs/decisions.md` "Export/import backup — REMOVED."
+
 ---
 
 ## Not yet built

@@ -179,6 +179,21 @@
                     </div>
                     <button class="sheet-close icon-button">✕</button>
                 </div>
+
+                <!-- Two small body-highlighter instances (front/back),
+                     coloured from this exercise's own bias data only —
+                     not the main Heatmap's training history. Populated
+                     and cropped to whichever muscles this exercise
+                     actually trains by exercises.js's paintMiniHeatmap();
+                     a view with nothing coloured gets .hidden rather than
+                     showing an all-grey silhouette. -->
+                <p class="section-heading">Muscles worked</p>
+                <div class="mini-heatmap-area">
+                    <div class="mini-body-view" data-view="front"></div>
+                    <div class="mini-body-view" data-view="back"></div>
+                </div>
+
+                <p class="section-heading">Muscle emphasis</p>
                 <ul class="muscle-role-list"></ul>
                 <button class="cta-primary sheet-add-btn">Add to session</button>
             </div>

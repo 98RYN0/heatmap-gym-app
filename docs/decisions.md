@@ -114,6 +114,17 @@ This directly resolves the "would require deciding how to roll up two different-
 
 **`js/heat.js`'s `tier()` removed** — it was single-purpose (only `js/heatmap.js`'s tier→colour lookup used it) and is now dead code with the tier system gone. `normalize()` is untouched; it already just produces the 0-1 values the gradient reads.
 
+### Exercise detail sheet: labelled percentages + mini per-exercise heatmap — RESOLVED 2026-07-14
+**Decision:** The exercise detail sheet's muscle percentages were unlabelled — Ryan pointed out nothing said what they represented. Added a "Muscle emphasis" heading above the list, and a "Muscles worked" mini heatmap above that: two small `createBodyHighlighter` instances, painted from `exercise.bias` rolled up through `MUSCLE_TO_REGIONS` (the same table `heat.js` uses for the real heatmap) — no logs, no recency, no normalization against other exercises, since this is static per-exercise data, not training history. Uses the exact same 40-step gradient the main Heatmap paints with, so a given shade means the same thing in both places.
+
+**Reuse over duplication:** rather than a second copy of body-highlighter's setup logic, `js/heatmap.js` gained two exports — `getThermalGradient()` (bundles `readThermalColors()` + `buildGradient()` into what a second consumer needs: `bodyColor`, `highlightedColors`, and a precomputed `bodyColorRgbString` for the zoom logic below) and `buildLibraryData(regionValues)` (the "turn a 0-1 value into N synthetic frequency entries" loop, extracted out of `paintHeatmap()`, which now calls it too — pure refactor there, verified the main Heatmap's own colours were unaffected).
+
+**"Zoomed in":** body-highlighter has a fixed anatomical viewBox with no built-in zoom. `js/exercises.js`'s `zoomToHighlighted()` runs after every `.update()`: finds polygons whose fill isn't still `bodyColorRgbString` (the browser normalizes inline hex fills to `rgb(...)` on readback — same fact already relied on during the gradient work), unions their `getBBox()` rects with ~30% padding, and sets that as the SVG's own `viewBox`. Works for any exercise generically rather than a fixed zoom level or hardcoded per-muscle regions — verified live: Barbell Curl crops tight to just the arm, Barbell Back Squat (which spans both views) crops each figure to its own leg/hip region. A view with nothing coloured (most exercises only touch one side — confirmed live with Deadlift, back-view only) gets `.hidden` rather than showing an empty grey silhouette.
+
+One correctness detail worth recording: `getBBox()` on an SVG inside a `display:none` ancestor returns a zero rect, so `openSheet()` has to apply `sheet.classList.add('open')` *before* calling the mini-heatmap paint/zoom function, not after.
+
+**Label styling reuse:** both new headings use `.section-heading` (introduced for the Log/Exercises merge's session section) rather than new CSS — but that class baked in horizontal padding tuned for its original unpadded container, which would have double-indented it inside `.sheet` (already uniformly padded). Moved the horizontal inset into a `.session-section .section-heading` override scoped to the original use case, leaving the base class padding-free so it drops cleanly into any already-padded container.
+
 ---
 
 ## Logging

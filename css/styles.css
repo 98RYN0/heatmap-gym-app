@@ -422,12 +422,22 @@ button:focus-visible {
   margin-bottom: var(--space-sm);
 }
 
+/* No horizontal inset by default — the exercise detail sheet (which also
+   uses this class, see .mini-heatmap-area below) already gets uniform
+   padding from .sheet itself, so adding more here would over-indent it
+   relative to its siblings. .session-section's own use needs its own
+   left/right inset (its container has none), added below scoped to it. */
 .section-heading {
-  padding: var(--space-md) var(--space-md) 0;
+  margin: var(--space-md) 0 var(--space-xs);
   font-size: var(--font-size-label);
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.session-section .section-heading {
+  padding: 0 var(--space-md);
+  margin-top: 0; /* .session-section already sits right under the topbar, no extra top gap needed */
 }
 
 .session-list {
@@ -696,6 +706,29 @@ button:focus-visible {
   margin-top: var(--space-xs);
   color: var(--color-text-muted);
   font-size: var(--font-size-label);
+}
+
+/* Mini per-exercise heatmap — two body-highlighter instances (exercises.js),
+   cropped to whichever muscles this exercise trains. Height-capped so a
+   full-body exercise's wider crop can't blow out .sheet's 80vh max-height;
+   width-capped so a single narrow crop doesn't stretch edge-to-edge. A
+   view with nothing coloured gets .hidden (exercises.js), so this still
+   looks centred with only one figure showing, which is the common case. */
+.mini-heatmap-area {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.mini-body-view {
+  max-width: 160px;
+}
+
+.mini-body-view svg {
+  max-height: 180px;
+  width: auto;
 }
 
 .muscle-role-list {

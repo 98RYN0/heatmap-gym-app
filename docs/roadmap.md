@@ -233,6 +233,20 @@ components instead.
   including a live-verified `ResizeObserver` throttling gap in
   backgrounded tabs that the `MutationObserver` covers.
 
+## Done (2026-07-14, later same day) — exercise detail sheet: labels + mini heatmap
+
+- The muscle percentage list now sits under a "Muscle emphasis" heading,
+  and a new "Muscles worked" mini heatmap sits above it — two small
+  body-highlighter figures, coloured purely from the open exercise's own
+  `bias` data (not training history), auto-cropped to just the muscles it
+  actually trains. `js/heatmap.js` gained `getThermalGradient()` and
+  `buildLibraryData()` so this reuses the exact same colour system as the
+  main Heatmap instead of duplicating it; `paintHeatmap()` itself was
+  refactored to use the extracted `buildLibraryData()` too. See
+  `docs/decisions.md` "Exercise detail sheet: labelled percentages + mini
+  per-exercise heatmap" for the zoom-to-bounding-box mechanism and a
+  `display:none`/`getBBox()` ordering gotcha it ran into.
+
 ---
 
 ## Not yet built

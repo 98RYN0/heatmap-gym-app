@@ -61,6 +61,42 @@ function buildGradient(stops, steps) {
   return colors;
 }
 
+// Bundles this module's colour internals into what a second consumer
+// needs to paint its own body-highlighter instance with matching colours
+// — currently the exercise detail sheet's mini per-exercise heatmap
+// (js/exercises.js). bodyColorRgbString is precomputed here so callers
+// don't need their own copy of hexToRgb just to detect "this polygon is
+// still at bodyColor" (the browser normalizes inline hex fills to rgb()
+// on readback).
+export function getThermalGradient() {
+  const colors = readThermalColors();
+  return {
+    bodyColor: colors.cold,
+    bodyColorRgbString: `rgb(${hexToRgb(colors.cold).join(', ')})`,
+    highlightedColors: buildGradient([colors.cold, colors.warm, colors.hot, colors.max], GRADIENT_STEPS),
+  };
+}
+
+// Turns a { region: 0-1 value } map into body-highlighter's expected data
+// shape — one synthetic entry per frequency unit, per region (see the
+// module comment above for why frequency, not a continuous value). Shared
+// by paintHeatmap() below and the exercise detail sheet's mini heatmap,
+// so both go through the exact same value-to-colour mapping. The clamp is
+// a no-op for paintHeatmap()'s already-normalized (max 1.0) values, but
+// matters for the mini heatmap's raw bias emphasis values, which aren't
+// guaranteed to be capped at exactly 1.0.
+export function buildLibraryData(regionValues) {
+  const libraryData = [];
+  Object.entries(regionValues).forEach(([region, value]) => {
+    if (!value) return; // untrained/unused — leave at bodyColor, nothing to add
+    const steps = Math.max(1, Math.min(GRADIENT_STEPS, Math.round(value * GRADIENT_STEPS)));
+    for (let i = 0; i < steps; i++) {
+      libraryData.push({ name: `${region}-${i}`, muscles: [region] });
+    }
+  });
+  return libraryData;
+}
+
 const frontContainer = document.querySelector('.body-view[data-view="front"]');
 const backContainer = document.querySelector('.body-view[data-view="back"]');
 
@@ -103,15 +139,14 @@ export async function initHeatmap(exerciseData, { onQuickAdd: onQuickAddCb } = {
   exercises = exerciseData;
   onQuickAdd = onQuickAddCb || null;
 
-  const colors = readThermalColors();
-  const highlightedColors = buildGradient([colors.cold, colors.warm, colors.hot, colors.max], GRADIENT_STEPS);
+  const { bodyColor, highlightedColors } = getThermalGradient();
   const svgStyle = { width: '100%', height: 'auto' };
   const onClick = ({ muscle }) => handleRegionClick(muscle);
 
   frontHighlighter = createBodyHighlighter({
     container: frontContainer,
     type: 'anterior',
-    bodyColor: colors.cold,
+    bodyColor,
     highlightedColors,
     svgStyle,
     onClick,
@@ -119,7 +154,7 @@ export async function initHeatmap(exerciseData, { onQuickAdd: onQuickAddCb } = {
   backHighlighter = createBodyHighlighter({
     container: backContainer,
     type: 'posterior',
-    bodyColor: colors.cold,
+    bodyColor,
     highlightedColors,
     svgStyle,
     onClick,
@@ -146,30 +181,13 @@ export function paintHeatmap() {
   const raw = computeRawHeat(logs, exercises);
   const normalized = normalize(raw);
 
-  // Build the library's expected data shape: one synthetic "exercise"
-  // entry per frequency unit, per muscle. heat.js's group ids are already
-  // the library's own MuscleType strings, so they're used directly — no
+  // heat.js's group ids are already the library's own MuscleType strings,
+  // so buildLibraryData()'s region keys are used directly — no
   // translation needed. The same array is handed to both highlighters;
   // each one only has SVG regions for the muscles visible from its own
   // view (e.g. biceps has no posterior region), so it naturally ignores
   // anything that doesn't apply to it.
-  //
-  // A normalized value has to become a whole number of entries — rounded
-  // to the nearest of GRADIENT_STEPS rather than bucketed into 3 tiers, so
-  // two different amounts of training only render identically if they're
-  // within about a GRADIENT_STEPS-th of each other, not within a third.
-  // Math.max(1, ...) keeps any nonzero value visibly above bodyColor even
-  // if it rounds down to 0 — only an exact 0 (untrained) stays at bodyColor.
-  const libraryData = [];
-  Object.keys(normalized).forEach((group) => {
-    const value = normalized[group];
-    if (!value) return; // untrained — leave at bodyColor, nothing to add
-
-    const steps = Math.max(1, Math.round(value * GRADIENT_STEPS));
-    for (let i = 0; i < steps; i++) {
-      libraryData.push({ name: `${group}-${i}`, muscles: [group] });
-    }
-  });
+  const libraryData = buildLibraryData(normalized);
 
   frontHighlighter.update({ data: libraryData });
   backHighlighter.update({ data: libraryData });

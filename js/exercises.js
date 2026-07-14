@@ -1,9 +1,15 @@
 // Exercise library screen — renders the list, wires search + filter pills,
 // and drives the detail bottom sheet ("Add to session" hands off to log.js
 // via the onAdd callback passed into initExercises, so this module doesn't
-// need to know log.js exists).
+// need to know log.js exists). The sheet also paints a mini per-exercise
+// heatmap (paintMiniHeatmap() below) — same body-highlighter library and
+// colour gradient as the main Heatmap screen, but driven purely by this
+// one exercise's own bias data, not training history.
 
+import createBodyHighlighter from 'https://unpkg.com/body-highlighter@3/dist/body-highlighter.esm.js';
 import { capitalize } from './utils.js';
+import { getThermalGradient, buildLibraryData } from './heatmap.js';
+import { MUSCLE_TO_REGIONS } from './muscle-taxonomy.js';
 
 // DOM refs are queried once at module load and reused — the elements
 // themselves never change, only their contents/classes.
@@ -18,16 +24,43 @@ const muscleRoleList = sheet.querySelector('.muscle-role-list');
 const sheetAddBtn = sheet.querySelector('.sheet-add-btn');
 const sheetCloseBtn = sheet.querySelector('.sheet-close');
 const sheetBackdrop = sheet.querySelector('.sheet-backdrop');
+const miniFrontContainer = sheet.querySelector('.mini-body-view[data-view="front"]');
+const miniBackContainer = sheet.querySelector('.mini-body-view[data-view="back"]');
 
 let exercises = [];
 let activeFilter = 'all';
 let onAddToSession = null; // callback supplied by app.js, ultimately log.js's addExerciseToSession
 let sheetExercise = null; // the exercise currently shown in the open sheet, if any
+let miniFrontHighlighter = null;
+let miniBackHighlighter = null;
+let bodyColorRgbString = ''; // set alongside the highlighters — see zoomToHighlighted()
 
 // Called once from app.js after the exercise database has loaded.
 export function initExercises(exerciseData, { onAdd } = {}) {
   exercises = exerciseData;
   onAddToSession = onAdd || null;
+
+  // Same colour gradient the main Heatmap paints with (js/heatmap.js),
+  // so a given shade means the same thing everywhere — only the data
+  // feeding it differs (see paintMiniHeatmap()).
+  const { bodyColor, bodyColorRgbString: rgbString, highlightedColors } = getThermalGradient();
+  bodyColorRgbString = rgbString;
+  const svgStyle = { width: '100%', height: 'auto' };
+
+  miniFrontHighlighter = createBodyHighlighter({
+    container: miniFrontContainer,
+    type: 'anterior',
+    bodyColor,
+    highlightedColors,
+    svgStyle,
+  });
+  miniBackHighlighter = createBodyHighlighter({
+    container: miniBackContainer,
+    type: 'posterior',
+    bodyColor,
+    highlightedColors,
+    svgStyle,
+  });
 
   renderExercises(exercises);
 
@@ -113,9 +146,72 @@ function openSheet(exercise) {
     muscleRoleList.appendChild(li);
   });
 
+  // Must come before paintMiniHeatmap() — it measures rendered SVG
+  // geometry (getBBox()), which returns a zero rect for anything inside
+  // a display:none ancestor, and the sheet is display:none until .open
+  // is applied.
   sheet.classList.add('open');
+  paintMiniHeatmap(exercise);
 }
 
 function closeSheet() {
   sheet.classList.remove('open');
+}
+
+// Rolls this exercise's bias muscles up into body-highlighter regions
+// (same MUSCLE_TO_REGIONS table heat.js uses for the real heatmap) and
+// paints both mini highlighters from that alone — no logs, no recency, no
+// normalization against other exercises. Multiple bias muscles mapping to
+// the same region sum together, same convention used everywhere else this
+// rollup happens.
+function paintMiniHeatmap(exercise) {
+  const regionValues = {};
+  exercise.bias.forEach(({ muscle, emphasis }) => {
+    (MUSCLE_TO_REGIONS[muscle] || []).forEach((region) => {
+      regionValues[region] = (regionValues[region] || 0) + emphasis;
+    });
+  });
+
+  const libraryData = buildLibraryData(regionValues);
+  miniFrontHighlighter.update({ data: libraryData });
+  miniBackHighlighter.update({ data: libraryData });
+
+  zoomToHighlighted(miniFrontContainer);
+  zoomToHighlighted(miniBackContainer);
+}
+
+// Crops an already-painted mini heatmap to just the muscles this exercise
+// actually highlighted, instead of showing the full-body silhouette at a
+// glance — the whole point of this being a "zoomed in" indicator. Finds
+// the coloured polygons (anything not still at bodyColor), unions their
+// bounding boxes with generous padding, and sets that as the SVG's own
+// viewBox. Works for any exercise generically, tight crop for a
+// single-muscle exercise, wider for one that spans more of the body. A
+// view with nothing coloured (most exercises only touch one side) is
+// hidden entirely rather than left showing an empty grey figure.
+function zoomToHighlighted(container) {
+  const svg = container.querySelector('svg');
+  if (!svg) return;
+
+  const highlighted = Array.from(svg.querySelectorAll('polygon')).filter(
+    (polygon) => polygon.style.fill && polygon.style.fill !== bodyColorRgbString
+  );
+
+  if (highlighted.length === 0) {
+    container.classList.add('hidden');
+    return;
+  }
+  container.classList.remove('hidden');
+
+  const boxes = highlighted.map((polygon) => polygon.getBBox());
+  const minX = Math.min(...boxes.map((b) => b.x));
+  const minY = Math.min(...boxes.map((b) => b.y));
+  const maxX = Math.max(...boxes.map((b) => b.x + b.width));
+  const maxY = Math.max(...boxes.map((b) => b.y + b.height));
+  const pad = Math.max(maxX - minX, maxY - minY) * 0.3;
+
+  svg.setAttribute(
+    'viewBox',
+    `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`
+  );
 }

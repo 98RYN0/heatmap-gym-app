@@ -37,18 +37,23 @@ sheet").
 The app is installable as a PWA (`manifest.json` + `sw.js`) and requests
 persistent storage on load — both aimed at making `localStorage` survive
 long-term on mobile browsers, which evict storage for sites that aren't
-installed. A manual JSON export/import backup (History screen topbar)
-covers the cases neither can prevent. See `docs/decisions.md` "Harden
-on-device persistence" for the full reasoning.
+installed. See `docs/decisions.md` "Harden on-device persistence" for the
+full reasoning.
 
-Not yet built: nav icons, light mode, the Training balance card, finer
-heatmap sub-muscle splits (bicep/tricep heads, lats vs. rhomboids — not a
-data gap, a rendering ceiling). See `docs/roadmap.md` for what's left.
+There's no separate "Log" screen or nav tab — starting a session (from the
+Heatmap CTA, or "Add to session" in the exercise library) reveals a
+session section right on the Exercises screen, and a small bar above the
+bottom nav lets you jump back to it from anywhere else while it's active.
+See `docs/decisions.md` "Merge Log into Exercises."
+
+Not yet built: light mode, the Training balance card, finer heatmap
+sub-muscle splits (bicep/tricep heads, lats vs. rhomboids — not a data
+gap, a rendering ceiling). See `docs/roadmap.md` for what's left.
 
 ## Structure
 
 ```
-index.html          Single-page shell — 4 screens + bottom nav + detail sheet
+index.html          Single-page shell — 3 screens + bottom nav/session bar + detail sheets
 manifest.json        PWA manifest — installability, theme colour, icon
 sw.js                 Minimal service worker (no offline caching — see docs/decisions.md)
 css/
@@ -56,18 +61,21 @@ css/
   styles.css         Layout, components, nav
 js/                  ES modules, loaded via <script type="module">
   app.js             Orchestrator — nav/tab switching, bootstraps + wires the other modules,
-                     registers sw.js, requests persistent storage
+                     registers sw.js, requests persistent storage, syncs the bottom
+                     chrome's height for .screens' padding
   data.js            fetch() for exercises.json, localStorage read/write for logs,
-                     storage-persistence request, export/import backup
+                     storage-persistence request
   utils.js           Small shared helpers (capitalize, local-date formatting)
   muscle-taxonomy.js The 6 exercise-library groups + the real-muscle → body-highlighter
                      region mapping (js/heat.js's rollup table)
   exercises.js       Exercise library: render, search, filter, detail sheet
-  log.js             Active session state: add exercise/sets, finish → localStorage
-  heat.js            Pure heat-calc functions (no DOM): set heat, recency, normalize, tier
+  log.js             In-progress session state: add/edit/remove exercises + sets, finish
+                     → localStorage. No screen of its own — renders into the Exercises
+                     screen's session section and the persistent session bar
+  heat.js            Pure heat-calc functions (no DOM): set heat, recency, normalize
   heatmap.js         Renders body figures via the body-highlighter CDN import, paints
                      regions + callout cards from heat.js output, quick-log sheet
-  history.js         History screen: list + calendar, export/import backup UI
+  history.js         History screen: list + calendar, log detail sheet
 data/
   exercises.json     Exercise database matching docs/data-model.md's schema
 assets/

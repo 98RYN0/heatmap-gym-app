@@ -167,7 +167,7 @@ At most one set across the whole session can be mid-edit at once, tracked by a s
 - Proactive assistant feel (surfaces insights and callouts) rather than reactive journal feel (just logs what happened)
 
 ### Navigation
-- Bottom tab bar, 4 tabs: Heatmap, Log, Exercises, History
+- Bottom tab bar, 3 tabs: Heatmap, Exercises, History (originally 4 — see "Merge Log into Exercises")
 
 ### Bottom nav icons — RESOLVED 2026-07-12
 **Decision:** Added a Tabler outline icon above each nav label — flame (Heatmap, matching the thermal colour language already used for heat), clipboard-list (Log), barbell (Exercises), history (History). Icons sit *alongside* the existing text labels, not replacing them — Ryan was explicit that both should stay, unlike the "replacing the current text labels" framing the roadmap backlog item had used. Icons are Tabler's real SVGs (MIT licensed), inlined directly as raw `<svg>` markup in `index.html` rather than pulled from a CDN or icon font — only 4 are needed, so embedding them costs nothing and keeps the nav working without a network request, unlike `body-highlighter`'s CDN import (which has to be a CDN import, since it's a whole rendering library, not 4 static icons). Each icon uses `stroke="currentColor"`, so it automatically tracks `.nav-item`'s own text colour (muted vs. accent when `.active`) with zero extra CSS — no separate active-icon-colour rule needed.
@@ -179,16 +179,26 @@ At most one set across the whole session can be mid-edit at once, tracked by a s
 
 Added `<link rel="apple-touch-icon">` alongside the existing favicon `<link>` — iOS Safari's "Add to Home Screen" reads that tag specifically rather than the manifest's `icons` array (which is what Android/Chrome uses), so without it the homescreen icon would silently fall back to a screenshot of the page instead of this icon. The original full-res PNG is kept as `assets/app_icon.png` (source of truth, not referenced directly anywhere) rather than deleted, in case a size needs regenerating later. `assets/icon.svg` was deleted outright rather than moved to `assets/legacy/` — that folder is for superseded assets kept as reference (the old hand-drawn body SVGs, still structurally interesting); the placeholder icon has no such value now that a real one exists.
 
+### Merge Log into Exercises — RESOLVED 2026-07-14
+**Decision:** Removed "Log" as its own bottom-nav tab — reachable cold with nothing in it (empty-state message, a button that just jumped to Exercises) was a real problem Ryan called out directly. `#screen-log` is gone; its content (session list, Finish button) now lives inside `#screen-exercises`, in a session section hidden until the session has ≥1 exercise. `js/log.js` keeps owning `currentSession` and all the set add/edit/duplicate/remove logic exactly as before — only *where* it renders changed, not how the session itself works. A session still only starts from Heatmap's "+ Log workout" CTA or "Add to session" from the exercise detail/quick-log sheets; there's no way to land on an empty session cold anymore, which was the actual goal.
+
+**Getting back to an active session.** Confirmed with Ryan up front (not obvious from the request alone): not a second bottom-nav entry, not Heatmap-CTA-only — a small persistent bar fixed above the bottom nav, visible on any screen except Exercises itself (redundant there — the session's already showing) whenever `currentSession.exercises` is non-empty. Owned by `js/log.js` (`updateSessionBar()`, exported) since it already owns the session state; `app.js`'s `switchTab()` also calls it after every navigation, since landing on Exercises needs to hide the bar even when the session itself didn't change.
+
+**`.bottom-chrome` wrapper.** The session bar and the bottom nav are both fixed-position elements at the viewport bottom, and needed to stack directly on top of each other regardless of either one's height. Rather than computing a manual offset (`bottom: 77px` or similar, which breaks the moment either element's height changes — as it already has twice this session), both now live as normal-flow children inside one `position: fixed` wrapper (`.bottom-chrome`), so they stack via ordinary layout with no coordinate math.
+
+**`--bottom-chrome-height` instead of a fourth hardcoded px guess.** `.screens`' `padding-bottom` has been manually bumped twice already as the nav grew (icons, then bigger touch targets) — adding a second dynamically-appearing element (the session bar) made a third guess clearly not worth it. `app.js` now measures `.bottom-chrome`'s real height and writes it to a CSS custom property. Two observers feed it: a `ResizeObserver` for the general case, and a `MutationObserver` watching the session bar's `class` attribute specifically — added after live testing showed `ResizeObserver`'s callback (tied to the rendering pipeline) produced zero notifications for a show/hide toggle in a backgrounded browser tab, while a `MutationObserver` (a microtask, not subject to that throttling) caught it immediately. Real foregrounded usage wouldn't hit the `ResizeObserver` gap, but a backgrounded/inactive tab on a real phone is a plausible enough case that the `MutationObserver` stayed in rather than being test-only scaffolding.
+
+**Hiding mechanism.** Both the session section and the session bar declare their own non-default `display` (`block`/`flex`), so a plain `[hidden]`-attribute approach wouldn't reliably override it (a class selector and an attribute selector tie on specificity, and author rules always win over the `[hidden]` UA default at equal specificity regardless of source order). Used a `.hidden { display: none !important; }` utility, toggled via `classList`, for both instead. The Finish button has no such conflict (`.text-action` declares no `display` of its own), so it still uses the plain `hidden` attribute.
+
 ### Home screen
 - Heatmap is the hero element
 - Contextual callout cards above the heatmap (e.g. "Rear delts — 9 days since last trained", "Chest — most trained, 3 sessions")
 - Primary CTA: "+ Log workout" button always visible
 
 ### Screens (inventory)
-1. **Heatmap** (home) — hero heatmap, simple/advanced toggle, contextual callouts
-2. **Log workout** — active session, add exercises, log sets with reps/weight/RPE
-3. **Exercise library** — browsable/searchable, filterable by muscle group; also the landing point when tapping a cold muscle on the heatmap
-4. **History** — 30-day view, calendar or list based
+1. **Heatmap** (home) — hero heatmap, contextual callouts, "+ Log workout" CTA
+2. **Exercises** — browsable/searchable library, filterable by muscle group; also hosts the in-progress session (added exercises, sets, Finish) once one exists — see "Merge Log into Exercises"
+3. **History** — 30-day view, calendar or list based
 
 ### Log workout entry point — RESOLVED 2026-06-30
 **Decision:** Blank session. Tapping "+ Log workout" opens an empty session; exercises are added manually via search/browse, not pre-suggested.

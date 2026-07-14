@@ -49,7 +49,18 @@ button:focus-visible {
 }
 
 .screens {
-  padding-bottom: 100px; /* clears the fixed bottom nav, now taller with icons */
+  /* Set by app.js's ResizeObserver on .bottom-chrome, which now varies —
+     taller when the session bar is showing, shorter when it's not — so a
+     single hardcoded number can't stay correct. 100px is only a fallback
+     for the instant before that first measurement runs. */
+  padding-bottom: var(--bottom-chrome-height, 100px);
+}
+
+/* Utility — hides an element regardless of what display value its own
+   class declares (a class selector and an attribute/id selector tie on
+   specificity, so this needs !important rather than relying on order). */
+.hidden {
+  display: none !important;
 }
 
 /* Topbar — shared across screens */
@@ -131,13 +142,54 @@ button:focus-visible {
   color: var(--color-accent-text);
 }
 
-/* Bottom navigation */
+/* Bottom navigation + persistent session bar */
+
+/* The one fixed-position element at the viewport bottom — the session bar
+   and the nav are both normal-flow children stacked inside it, so the bar
+   always sits directly above the nav with no manual offset math regardless
+   of either one's height. */
+.bottom-chrome {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Session bar — hidden by default (see index.html), shown/updated by
+   log.js's updateSessionBar() whenever a session is in progress and
+   you're not already on the Exercises screen. Accent-coloured so it reads
+   as "tap me to continue," distinct from the muted bottom nav below it. */
+.session-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-heading);
+}
+
+.session-bar:active {
+  filter: brightness(0.95);
+}
+
+.session-bar-text {
+  flex: 1;
+  text-align: left;
+}
+
+.session-bar-arrow {
+  font-size: var(--font-size-value);
+  line-height: 1;
+}
 
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
   display: flex;
   background-color: var(--color-surface);
   border-top: 1px solid var(--color-border);
@@ -360,7 +412,23 @@ button:focus-visible {
   padding: var(--space-xl);
 }
 
-/* Log workout screen */
+/* Current session — lives inside the Exercises screen (see index.html),
+   not its own screen. Hidden via .hidden until the session has at least
+   one exercise. */
+
+.session-section {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.section-heading {
+  padding: var(--space-md) var(--space-md) 0;
+  font-size: var(--font-size-label);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 
 .session-list {
   list-style: none;

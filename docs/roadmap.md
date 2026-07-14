@@ -217,6 +217,22 @@ components instead.
   and PWA installability remain as the app's storage-eviction
   protection. See `docs/decisions.md` "Export/import backup — REMOVED."
 
+## Done (2026-07-14, later same day) — merged Log into Exercises
+
+- Removed "Log" as its own bottom-nav tab — it was reachable cold with
+  nothing in it, which Ryan flagged directly. `#screen-log` is gone;
+  `js/log.js`'s session UI now renders into a session section on the
+  Exercises screen (hidden until ≥1 exercise is added), still started
+  only from Heatmap's CTA or "Add to session." A new persistent session
+  bar (fixed above the bottom nav via a `.bottom-chrome` wrapper) is the
+  way back to an active session from any other screen. `.screens`'
+  `padding-bottom` moved from a hardcoded number to a `--bottom-chrome-
+  height` custom property, kept in sync by a `ResizeObserver` +
+  `MutationObserver` pair rather than needing a fourth manual bump. See
+  `docs/decisions.md` "Merge Log into Exercises" for the full design,
+  including a live-verified `ResizeObserver` throttling gap in
+  backgrounded tabs that the `MutationObserver` covers.
+
 ---
 
 ## Not yet built

@@ -1,17 +1,19 @@
-// Log workout screen — owns the in-progress session, rendering exercise
-// cards with inline set-entry forms, and finishing a session out to storage.
-//
-// There's no "browsing vs actively adding" mode: tapping "Add to session"
-// on any exercise always adds it to the current session and jumps to this
-// tab. That's simpler than tracking a separate flag and still supports the
-// "+ Add exercise" -> Exercises tab -> pick one -> back here flow.
+// In-progress workout session — owns currentSession, rendering exercise
+// cards with inline set-entry forms inside the Exercises screen's session
+// section, plus the persistent session bar shown on other screens while a
+// session is active. There's no separate "Log" screen or nav tab: tapping
+// "Add to session" on any exercise adds it to currentSession and jumps to
+// the Exercises screen, which shows the session section right above the
+// library. See docs/decisions.md "Merge Log into Exercises."
 
 import { addLog } from './data.js';
 import { todayDateString } from './utils.js';
 
+const sessionSection = document.getElementById('session-section');
 const sessionList = document.querySelector('.session-list');
-const addExerciseBtn = document.getElementById('add-exercise-btn');
 const finishBtn = document.getElementById('finish-session-btn');
+const sessionBar = document.getElementById('session-bar');
+const sessionBarText = sessionBar.querySelector('.session-bar-text');
 
 let exercisesById = new Map(); // built once from the exercise list for O(1) lookups while rendering
 let currentSession = { exercises: [] };
@@ -28,8 +30,8 @@ export function initLog(exercises, { switchTab, onFinished: onFinishedCb } = {})
   switchTabFn = switchTab;
   onFinished = onFinishedCb;
 
-  addExerciseBtn.addEventListener('click', () => switchTabFn('exercises'));
   finishBtn.addEventListener('click', finishSession);
+  sessionBar.addEventListener('click', () => switchTabFn('exercises'));
 
   renderSession();
 }
@@ -39,27 +41,42 @@ export function initLog(exercises, { switchTab, onFinished: onFinishedCb } = {})
 export function addExerciseToSession(exercise) {
   currentSession.exercises.push({ exerciseId: exercise.id, sets: [] });
   renderSession();
-  if (switchTabFn) switchTabFn('log');
+  if (switchTabFn) switchTabFn('exercises');
 }
 
-// Re-renders the whole session list from currentSession. Called after every
-// change (add exercise, add set, finish) rather than patching the DOM
-// in place — the session is small, so a full re-render stays cheap and
-// keeps the rendering logic in one place.
+// Re-renders the session section from currentSession, and keeps the
+// Finish button + session bar in sync with it. Called after every change
+// (add/remove exercise, add/edit/remove set, finish) rather than patching
+// the DOM in place — the session is small, so a full re-render stays
+// cheap and keeps the rendering logic in one place.
 function renderSession() {
+  const isEmpty = currentSession.exercises.length === 0;
+  sessionSection.classList.toggle('hidden', isEmpty);
+  finishBtn.hidden = isEmpty;
+
   sessionList.innerHTML = '';
-
-  if (currentSession.exercises.length === 0) {
-    const li = document.createElement('li');
-    li.className = 'empty-state';
-    li.textContent = 'No exercises added yet';
-    sessionList.appendChild(li);
-    return;
-  }
-
   currentSession.exercises.forEach((entry) => {
     sessionList.appendChild(buildExerciseCard(entry));
   });
+
+  updateSessionBar();
+}
+
+// Shows/hides the persistent session bar (index.html, fixed above the
+// bottom nav) and keeps its text current. Visible whenever there's a
+// session to return to and you're not already looking at it — exported so
+// app.js's switchTab() can also call this after a plain navigation (e.g.
+// landing on Exercises should hide the bar immediately, even though the
+// session itself didn't change).
+export function updateSessionBar() {
+  const count = currentSession.exercises.length;
+  const activeScreen = document.querySelector('.screen.active')?.dataset.screen;
+  const shouldShow = count > 0 && activeScreen !== 'exercises';
+
+  sessionBar.classList.toggle('hidden', !shouldShow);
+  if (shouldShow) {
+    sessionBarText.textContent = `Session in progress · ${count} exercise${count === 1 ? '' : 's'}`;
+  }
 }
 
 // Builds one <li class="exercise-card"> — the exercise's logged sets so

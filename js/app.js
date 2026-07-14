@@ -1,13 +1,16 @@
 // Orchestrator — nav/tab switching, kicks off the other modules.
 //
 // This is the only file that knows about all the other modules. Each of
-// exercises.js/log.js/heatmap.js/history.js owns one screen and exposes an
-// init function; app.js wires them together and hands out `switchTab` so
+// exercises.js/heatmap.js/history.js owns one screen and exposes an init
+// function; log.js is the exception — it owns the in-progress session
+// rather than a screen of its own, rendering into a section of the
+// Exercises screen and into the persistent session bar (see log.js's own
+// comment). app.js wires everything together and hands out `switchTab` so
 // any module can navigate (e.g. Finish workout jumping back to Heatmap).
 
 import { loadExercises, requestPersistentStorage } from './data.js';
 import { initExercises } from './exercises.js';
-import { initLog, addExerciseToSession } from './log.js';
+import { initLog, addExerciseToSession, updateSessionBar } from './log.js';
 import { initHeatmap, paintHeatmap } from './heatmap.js';
 import { initHistory, refreshHistory } from './history.js';
 
@@ -16,8 +19,10 @@ const screens = document.querySelectorAll('.screen');
 
 // Shows the screen whose data-screen matches targetName and hides the rest,
 // keeping the bottom-nav highlight in sync. Every module that needs to
-// navigate (e.g. "Add exercise" -> Exercises tab) is handed this function
-// rather than importing it, so there's a single source of truth for nav state.
+// navigate (e.g. adding an exercise -> Exercises screen) is handed this
+// function rather than importing it, so there's a single source of truth
+// for nav state. There's no "log" target — that screen was merged into
+// Exercises (see docs/decisions.md "Merge Log into Exercises").
 function switchTab(targetName) {
   screens.forEach((screen) => {
     screen.classList.toggle('active', screen.dataset.screen === targetName);
@@ -25,15 +30,46 @@ function switchTab(targetName) {
   navButtons.forEach((button) => {
     button.classList.toggle('active', button.dataset.target === targetName);
   });
+  // A plain navigation can change whether the session bar should be
+  // showing (e.g. landing on Exercises hides it) even though the session
+  // itself didn't change.
+  updateSessionBar();
 }
 
 navButtons.forEach((button) => {
   button.addEventListener('click', () => switchTab(button.dataset.target));
 });
 
-// The Heatmap screen's own CTA — a shortcut to the same Log tab the bottom
-// nav already reaches, so it just needs the same switchTab call.
-document.getElementById('log-workout-cta').addEventListener('click', () => switchTab('log'));
+// The Heatmap screen's own CTA — jumps to the Exercises screen, which
+// shows the current session (if any) right above the library either way,
+// so this doesn't need to special-case "start a new session" vs.
+// "continue the existing one."
+document.getElementById('log-workout-cta').addEventListener('click', () => switchTab('exercises'));
+
+// The session bar and bottom nav are stacked inside one fixed-position
+// wrapper (see index.html's .bottom-chrome) so the bar always sits right
+// above the nav regardless of either one's height — but .screens still
+// needs to know that combined height to pad its scrollable content
+// correctly, kept in a --bottom-chrome-height custom property rather than
+// another manual px guess like the last two times this number had to be
+// bumped. Two observers feed it, for two different reasons:
+//   - ResizeObserver: the general case (viewport/orientation changes,
+//     anything that reflows the nav itself).
+//   - MutationObserver on the session bar's class: ResizeObserver's
+//     callback is tied to the rendering pipeline, which browsers throttle
+//     for backgrounded/inactive tabs — verified live where a show/hide
+//     toggle on the bar produced zero ResizeObserver callbacks. A
+//     MutationObserver's callback is a microtask, not subject to that
+//     throttling, so it reliably catches the one thing in this app that
+//     actually changes the wrapper's height: the bar's own hidden toggle.
+const bottomChrome = document.querySelector('.bottom-chrome');
+const sessionBarEl = document.getElementById('session-bar');
+function syncBottomChromeHeight() {
+  document.documentElement.style.setProperty('--bottom-chrome-height', `${bottomChrome.offsetHeight}px`);
+}
+new ResizeObserver(syncBottomChromeHeight).observe(bottomChrome);
+new MutationObserver(syncBottomChromeHeight).observe(sessionBarEl, { attributes: true, attributeFilter: ['class'] });
+syncBottomChromeHeight(); // set an initial value now rather than waiting for either observer's first async callback
 
 // Registering a service worker (even one that does nothing but pass
 // requests through, see sw.js) is what makes the app installable to a
@@ -62,9 +98,8 @@ async function bootstrap() {
   // suggestion behaves identically to tapping "Add to session" there.
   await initHeatmap(exercises, { onQuickAdd: addExerciseToSession }); // awaited: it fetches + injects the body SVGs before first paint
   initHistory(exercises, {
-    // Importing a backup or deleting a single log both change the logs
-    // the heatmap is computed from — either needs the same repaint the
-    // Log screen's "Finish" triggers.
+    // Deleting a single log changes the data the heatmap is computed
+    // from, so it needs the same repaint finishing a session triggers.
     onLogsChanged: paintHeatmap,
   });
   initLog(exercises, {

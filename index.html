@@ -16,9 +16,11 @@
 <body>
     <div class="app">
         <main class="screens">
-            <!-- 4 screens, one per bottom-nav tab. Only the one with .active
-                 shows at a time — switchTab() in app.js toggles it by
-                 matching data-target (nav button) to data-screen (section). -->
+            <!-- 3 screens, one per bottom-nav tab, plus the merged Log
+                 session content living inside #screen-exercises (see its
+                 comment below) — only the screen with .active shows at a
+                 time, switchTab() in app.js toggles it by matching
+                 data-target (nav button) to data-screen (section). -->
 
             <section id="screen-heatmap" class="screen active" data-screen="heatmap">
                 <div class="topbar">
@@ -51,21 +53,28 @@
                 <button class="cta-primary" id="log-workout-cta">+ Log workout</button>
             </section>
 
-            <section id="screen-log" class="screen" data-screen="log">
-                <div class="topbar">
-                    <h1>Log workout</h1>
-                    <button class="text-action" id="finish-session-btn">Finish</button>
-                </div>
-
-                <!-- Populated by log.js's renderSession() — one exercise-card per added exercise. -->
-                <ul class="session-list"></ul>
-
-                <button class="cta-primary" id="add-exercise-btn">+ Add exercise</button>
-            </section>
-
+            <!-- Exercises + the in-progress session, merged into one screen —
+                 there's no separate "Log" tab. Browsing is always available;
+                 the session section above it (log.js's renderSession()) is
+                 hidden via .hidden until at least one exercise is added.
+                 Entered by starting a session (Heatmap's CTA, or "Add to
+                 session" from the detail sheet below), never directly from
+                 the bottom nav — see docs/decisions.md "Merge Log into
+                 Exercises." -->
             <section id="screen-exercises" class="screen" data-screen="exercises">
                 <div class="topbar">
                     <h1>Exercises</h1>
+                    <button class="text-action" id="finish-session-btn" hidden>Finish</button>
+                </div>
+
+                <!-- Populated by log.js's renderSession() — one exercise-card
+                     per added exercise. Hidden (via .hidden) whenever the
+                     session is empty, rather than showing an empty-state
+                     message — the library below is this screen's default
+                     content either way. -->
+                <div class="session-section hidden" id="session-section">
+                    <h2 class="section-heading">Current session</h2>
+                    <ul class="session-list"></ul>
                 </div>
 
                 <div class="section-block">
@@ -118,29 +127,43 @@
 
         </main>
 
-        <!-- Icons are Tabler's outline set (MIT), inlined as raw SVG rather
-             than pulled from a CDN — there are only 4 of them, so embedding
-             costs nothing and keeps the nav working offline. stroke="currentColor"
-             means each icon automatically follows .nav-item's own text
-             colour (muted vs. accent when .active) with no extra CSS. -->
-        <nav class="bottom-nav">
-            <button class="nav-item active" data-target="heatmap">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10.941c2.333 -3.308 .167 -7.823 -1 -8.941c0 3.395 -2.235 5.299 -3.667 6.706c-1.43 1.408 -2.333 3.294 -2.333 5.588c0 3.704 3.134 6.706 7 6.706c3.866 0 7 -3.002 7 -6.706c0 -1.712 -1.232 -4.403 -2.333 -5.588c-2.084 3.353 -3.257 3.353 -4.667 2.235" /></svg>
-                <span class="nav-label">Heatmap</span>
-            </button>
-            <button class="nav-item" data-target="log">
+        <!-- Fixed to the viewport bottom as a group so the session bar
+             (log.js's updateSessionBar()) stacks directly above the nav
+             with no manual height math — app.js measures this wrapper's
+             real height via ResizeObserver and writes it into
+             --bottom-chrome-height, which .screens reads for its
+             padding-bottom. Icons are Tabler's outline set (MIT), inlined
+             as raw SVG rather than pulled from a CDN — there are only a
+             few of them, so embedding costs nothing and keeps the nav
+             working offline. stroke="currentColor" means each icon
+             automatically follows its button's own text colour with no
+             extra CSS. -->
+        <div class="bottom-chrome">
+            <!-- Visible whenever a session is in progress and you're not
+                 already looking at it — the only way back to it besides
+                 starting a new addition, since Log isn't in the bottom nav.
+                 Hidden/shown and its text kept in sync by log.js's
+                 updateSessionBar(). -->
+            <button class="session-bar hidden" id="session-bar">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 5a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2" /><path d="M9 12l.01 0" /><path d="M13 12l2 0" /><path d="M9 16l.01 0" /><path d="M13 16l2 0" /></svg>
-                <span class="nav-label">Log</span>
+                <span class="session-bar-text"></span>
+                <span class="session-bar-arrow" aria-hidden="true">›</span>
             </button>
-            <button class="nav-item" data-target="exercises">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h1" /><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2" /><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1" /><path d="M9 12h6" /><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1" /><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2" /><path d="M22 12h-1" /></svg>
-                <span class="nav-label">Exercises</span>
-            </button>
-            <button class="nav-item" data-target="history">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
-                <span class="nav-label">History</span>
-            </button>
-        </nav>
+            <nav class="bottom-nav">
+                <button class="nav-item active" data-target="heatmap">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10.941c2.333 -3.308 .167 -7.823 -1 -8.941c0 3.395 -2.235 5.299 -3.667 6.706c-1.43 1.408 -2.333 3.294 -2.333 5.588c0 3.704 3.134 6.706 7 6.706c3.866 0 7 -3.002 7 -6.706c0 -1.712 -1.232 -4.403 -2.333 -5.588c-2.084 3.353 -3.257 3.353 -4.667 2.235" /></svg>
+                    <span class="nav-label">Heatmap</span>
+                </button>
+                <button class="nav-item" data-target="exercises">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h1" /><path d="M6 8h-2a1 1 0 0 0 -1 1v6a1 1 0 0 0 1 1h2" /><path d="M6 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1" /><path d="M9 12h6" /><path d="M15 7v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1 -1v-10a1 1 0 0 0 -1 -1h-1a1 1 0 0 0 -1 1" /><path d="M18 8h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2" /><path d="M22 12h-1" /></svg>
+                    <span class="nav-label">Exercises</span>
+                </button>
+                <button class="nav-item" data-target="history">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
+                    <span class="nav-label">History</span>
+                </button>
+            </nav>
+        </div>
 
         <!-- Shared exercise-detail bottom sheet — one instance reused for
              whichever exercise was last tapped in the library. Populated by

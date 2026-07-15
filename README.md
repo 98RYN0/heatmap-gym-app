@@ -17,11 +17,15 @@ callout cards repaint from real heat data. History (list + calendar) reads
 from the same log data — tapping a list entry shows the full logged detail
 (exercises, sets, reps, weight, RPE) and can delete it, which repaints the
 heatmap to match (see `docs/decisions.md` "View + delete a logged
-workout"). The heatmap body figures are rendered by the
-[`body-highlighter`](https://github.com/lahaxearnaud/body-highlighter)
-library (CDN import, zero dependencies) — real anatomical regions, no
+workout"). The heatmap body figures are rendered by a forked, locally
+vendored copy of [`body-highlighter`](https://github.com/lahaxearnaud/body-highlighter)
+(`js/vendor/`, MIT) — real anatomical regions, no
 Simple/Advanced toggle (removed once it became clear the two were always
-the same diagram — see `docs/decisions.md` "Heatmap toggle removed").
+the same diagram — see `docs/decisions.md` "Heatmap toggle removed"). A
+Male/Female toggle on the Heatmap screen switches body models — the
+original library has no such option, so the fork adds one, with female
+anatomy adapted from a different MIT-licensed project (see
+`docs/decisions.md` "Add a female body model option").
 
 The exercise database covers 124 exercises across 6 groups (Chest, Back,
 Shoulders, Arms, Core, Legs), each tagged with real anatomical muscle
@@ -73,9 +77,14 @@ js/                  ES modules, loaded via <script type="module">
                      → localStorage. No screen of its own — renders into the Exercises
                      screen's session section and the persistent session bar
   heat.js            Pure heat-calc functions (no DOM): set heat, recency, normalize
-  heatmap.js         Renders body figures via the body-highlighter CDN import, paints
+  heatmap.js         Renders body figures via the vendored body-highlighter fork, paints
                      regions + callout cards from heat.js output, quick-log sheet
   history.js         History screen: list + calendar, log detail sheet
+  vendor/
+    body-highlighter.js              Forked body-highlighter (MIT) — readable
+                                      reimplementation, adds gender + <path> support
+    body-highlighter-female-data.js  Female anatomy, adapted from a different
+                                      MIT-licensed project (see docs/decisions.md)
 data/
   exercises.json     Exercise database matching docs/data-model.md's schema
 assets/
@@ -99,9 +108,8 @@ docs/
 No build step — vanilla HTML/CSS/JS, loaded as ES modules. Because `app.js`
 fetches `data/exercises.json`, it needs to be served over `http://`, not
 opened directly as a `file://` URL (browsers block module `fetch()` from
-`file://`). `heatmap.js` also imports the `body-highlighter` library
-straight from a CDN (`unpkg.com`), so the first load needs network access —
-the browser caches it after that.
+`file://`). No CDN dependencies — the body-highlighter fork is vendored
+locally (`js/vendor/`), so the app works offline once loaded once.
 
 Neither Node nor Python is installed on this machine as of the last session,
 so there's a zero-dependency static server in `.claude/serve.ps1` (pure

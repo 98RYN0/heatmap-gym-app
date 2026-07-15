@@ -6,7 +6,7 @@
 // colour gradient as the main Heatmap screen, but driven purely by this
 // one exercise's own bias data, not training history.
 
-import createBodyHighlighter from 'https://unpkg.com/body-highlighter@3/dist/body-highlighter.esm.js';
+import createBodyHighlighter from './vendor/body-highlighter.js';
 import { capitalize } from './utils.js';
 import { getThermalGradient, buildLibraryData } from './heatmap.js';
 import { MUSCLE_TO_REGIONS } from './muscle-taxonomy.js';
@@ -34,11 +34,13 @@ let sheetExercise = null; // the exercise currently shown in the open sheet, if 
 let miniFrontHighlighter = null;
 let miniBackHighlighter = null;
 let bodyColorRgbString = ''; // set alongside the highlighters — see zoomToHighlighted()
+let currentGender = 'male';
 
 // Called once from app.js after the exercise database has loaded.
-export function initExercises(exerciseData, { onAdd } = {}) {
+export function initExercises(exerciseData, { onAdd, gender } = {}) {
   exercises = exerciseData;
   onAddToSession = onAdd || null;
+  currentGender = gender || 'male';
 
   // Same colour gradient the main Heatmap paints with (js/heatmap.js),
   // so a given shade means the same thing everywhere — only the data
@@ -50,6 +52,7 @@ export function initExercises(exerciseData, { onAdd } = {}) {
   miniFrontHighlighter = createBodyHighlighter({
     container: miniFrontContainer,
     type: 'anterior',
+    gender: currentGender,
     bodyColor,
     highlightedColors,
     svgStyle,
@@ -57,6 +60,7 @@ export function initExercises(exerciseData, { onAdd } = {}) {
   miniBackHighlighter = createBodyHighlighter({
     container: miniBackContainer,
     type: 'posterior',
+    gender: currentGender,
     bodyColor,
     highlightedColors,
     svgStyle,
@@ -158,6 +162,15 @@ function closeSheet() {
   sheet.classList.remove('open');
 }
 
+// Called by app.js when the body-model toggle changes. Just updates the
+// remembered gender if no sheet is open (the next openSheet() will pick
+// it up); if one's already open, repaints it immediately so switching
+// models is visible right away rather than only on the next exercise.
+export function setMiniHeatmapGender(gender) {
+  currentGender = gender;
+  if (sheetExercise) paintMiniHeatmap(sheetExercise);
+}
+
 // Rolls this exercise's bias muscles up into body-highlighter regions
 // (same MUSCLE_TO_REGIONS table heat.js uses for the real heatmap) and
 // paints both mini highlighters from that alone — no logs, no recency, no
@@ -173,8 +186,11 @@ function paintMiniHeatmap(exercise) {
   });
 
   const libraryData = buildLibraryData(regionValues);
-  miniFrontHighlighter.update({ data: libraryData });
-  miniBackHighlighter.update({ data: libraryData });
+  // gender is re-sent on every paint (not just when it changes) since
+  // this is also how a toggle change while the sheet is open takes
+  // effect — see setMiniHeatmapGender().
+  miniFrontHighlighter.update({ data: libraryData, gender: currentGender });
+  miniBackHighlighter.update({ data: libraryData, gender: currentGender });
 
   zoomToHighlighted(miniFrontContainer);
   zoomToHighlighted(miniBackContainer);
@@ -183,18 +199,19 @@ function paintMiniHeatmap(exercise) {
 // Crops an already-painted mini heatmap to just the muscles this exercise
 // actually highlighted, instead of showing the full-body silhouette at a
 // glance — the whole point of this being a "zoomed in" indicator. Finds
-// the coloured polygons (anything not still at bodyColor), unions their
-// bounding boxes with generous padding, and sets that as the SVG's own
-// viewBox. Works for any exercise generically, tight crop for a
-// single-muscle exercise, wider for one that spans more of the body. A
-// view with nothing coloured (most exercises only touch one side) is
-// hidden entirely rather than left showing an empty grey figure.
+// the coloured shapes (anything not still at bodyColor — <polygon> for
+// the male model, <path> for female, see js/vendor/body-highlighter.js),
+// unions their bounding boxes with generous padding, and sets that as
+// the SVG's own viewBox. Works for any exercise generically, tight crop
+// for a single-muscle exercise, wider for one that spans more of the
+// body. A view with nothing coloured (most exercises only touch one
+// side) is hidden entirely rather than left showing an empty grey figure.
 function zoomToHighlighted(container) {
   const svg = container.querySelector('svg');
   if (!svg) return;
 
-  const highlighted = Array.from(svg.querySelectorAll('polygon')).filter(
-    (polygon) => polygon.style.fill && polygon.style.fill !== bodyColorRgbString
+  const highlighted = Array.from(svg.querySelectorAll('polygon, path')).filter(
+    (shape) => shape.style.fill && shape.style.fill !== bodyColorRgbString
   );
 
   if (highlighted.length === 0) {
@@ -203,7 +220,39 @@ function zoomToHighlighted(container) {
   }
   container.classList.remove('hidden');
 
-  const boxes = highlighted.map((polygon) => polygon.getBBox());
+  // Female shapes sit inside a transformed <g> (see FEMALE_VIEW_TRANSFORMS
+  // in js/vendor/body-highlighter.js) — getBBox() alone returns a shape's
+  // bounding box in its *own* local space, before that ancestor transform
+  // is applied, which for female would be the raw untransformed source
+  // coordinates (hundreds of units, not the ~100x200 target box). getCTM()
+  // gives the matrix from that local space into the SVG's own user space,
+  // accounting for every transform in between — applying it to each
+  // shape's bbox corners gives the true post-transform box. For the male
+  // model (no wrapping transform) this CTM is the identity, so the result
+  // is identical to plain getBBox() — one code path handles both.
+  const boxes = highlighted.map((shape) => {
+    const bbox = shape.getBBox();
+    const ctm = shape.getCTM();
+    if (!ctm) return bbox;
+    const corners = [
+      { x: bbox.x, y: bbox.y },
+      { x: bbox.x + bbox.width, y: bbox.y },
+      { x: bbox.x, y: bbox.y + bbox.height },
+      { x: bbox.x + bbox.width, y: bbox.y + bbox.height },
+    ].map((p) => ({
+      x: ctm.a * p.x + ctm.c * p.y + ctm.e,
+      y: ctm.b * p.x + ctm.d * p.y + ctm.f,
+    }));
+    const xs = corners.map((p) => p.x);
+    const ys = corners.map((p) => p.y);
+    return {
+      x: Math.min(...xs),
+      y: Math.min(...ys),
+      width: Math.max(...xs) - Math.min(...xs),
+      height: Math.max(...ys) - Math.min(...ys),
+    };
+  });
+
   const minX = Math.min(...boxes.map((b) => b.x));
   const minY = Math.min(...boxes.map((b) => b.y));
   const maxX = Math.max(...boxes.map((b) => b.x + b.width));

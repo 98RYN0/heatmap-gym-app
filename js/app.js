@@ -8,10 +8,10 @@
 // comment). app.js wires everything together and hands out `switchTab` so
 // any module can navigate (e.g. Finish workout jumping back to Heatmap).
 
-import { loadExercises, requestPersistentStorage } from './data.js';
-import { initExercises } from './exercises.js';
+import { loadExercises, requestPersistentStorage, loadBodyModel, saveBodyModel } from './data.js';
+import { initExercises, setMiniHeatmapGender } from './exercises.js';
 import { initLog, addExerciseToSession, updateSessionBar } from './log.js';
-import { initHeatmap, paintHeatmap } from './heatmap.js';
+import { initHeatmap, paintHeatmap, setGender } from './heatmap.js';
 import { initHistory, refreshHistory } from './history.js';
 
 const navButtons = document.querySelectorAll('.nav-item');
@@ -86,17 +86,38 @@ if ('serviceWorker' in navigator) {
 
 requestPersistentStorage();
 
+// Which body model (js/vendor/body-highlighter.js's `gender` option)
+// paints the Heatmap screen and the exercise detail sheet's mini
+// heatmap — both need to agree, so it's read once here rather than each
+// module tracking its own copy. The toggle-pill lives in the Heatmap
+// topbar (see index.html) since that's where it visibly matters most,
+// but it affects both.
+const bodyModelToggle = document.querySelector('[data-toggle="body-model"]');
+const bodyModelOptions = bodyModelToggle.querySelectorAll('.toggle-option');
+
+function setBodyModelActiveButton(gender) {
+  bodyModelOptions.forEach((button) => {
+    button.classList.toggle('active', button.dataset.value === gender);
+  });
+}
+
+// Reflects the saved preference immediately, without waiting on the rest
+// of bootstrap() (which needs the exercise database first) — this is
+// just a class toggle, no highlighter dependency.
+setBodyModelActiveButton(loadBodyModel());
+
 // Everything downstream needs the exercise database, so it's loaded first
 // and passed into each module's init function rather than each module
 // fetching it separately.
 async function bootstrap() {
   const exercises = await loadExercises();
+  const gender = loadBodyModel();
 
-  initExercises(exercises, { onAdd: addExerciseToSession });
+  initExercises(exercises, { onAdd: addExerciseToSession, gender });
   // onQuickAdd reuses the exact same "add to session" action as the
   // Exercise library's detail sheet — tapping a heatmap region's
   // suggestion behaves identically to tapping "Add to session" there.
-  await initHeatmap(exercises, { onQuickAdd: addExerciseToSession }); // awaited: it fetches + injects the body SVGs before first paint
+  await initHeatmap(exercises, { onQuickAdd: addExerciseToSession, gender }); // awaited: it fetches + injects the body SVGs before first paint
   initHistory(exercises, {
     // Deleting a single log changes the data the heatmap is computed
     // from, so it needs the same repaint finishing a session triggers.
@@ -110,6 +131,20 @@ async function bootstrap() {
       paintHeatmap();
       refreshHistory();
     },
+  });
+
+  // Wired only after both highlighters exist above — clicking the toggle
+  // before that (a narrow but real window during the initial exercises.json
+  // fetch) would otherwise call setGender()/setMiniHeatmapGender() while
+  // they're still null.
+  bodyModelOptions.forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextGender = button.dataset.value;
+      setBodyModelActiveButton(nextGender);
+      saveBodyModel(nextGender);
+      setGender(nextGender);
+      setMiniHeatmapGender(nextGender);
+    });
   });
 }
 

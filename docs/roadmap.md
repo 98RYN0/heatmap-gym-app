@@ -247,6 +247,26 @@ components instead.
   per-exercise heatmap" for the zoom-to-bounding-box mechanism and a
   `display:none`/`getBBox()` ordering gotcha it ran into.
 
+## Done (2026-07-14, later still) — female body model option
+
+- A Male/Female toggle in the Heatmap topbar switches both the main
+  Heatmap and the exercise detail sheet's mini heatmap between two body
+  models, persisted via `js/data.js`'s `loadBodyModel()`/
+  `saveBodyModel()`. body-highlighter has no way to supply custom
+  geometry, so it's now vendored locally as `js/vendor/body-
+  highlighter.js` — a readable, from-scratch reimplementation (not a
+  hand-patched minified bundle) with a `gender` option and `<path>`
+  support added, male geometry extracted verbatim from the original so
+  it renders identically to before. Female anatomy adapted from
+  `TeamBuildr/react-native-body-highlighter` (MIT), fit into this
+  library's fixed viewBox via a computed per-view SVG transform rather
+  than rewriting the source path coordinates. Along the way, fixed a
+  real bug in the exercise sheet's mini-heatmap zoom logic
+  (`polygon`-only selector, untransformed `getBBox()`) that would have
+  silently broken it for the female model. See `docs/decisions.md` "Add
+  a female body model option" for the full design, the coordinate-system
+  derivation, and the accepted granularity gap versus the male model.
+
 ---
 
 ## Not yet built

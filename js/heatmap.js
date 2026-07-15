@@ -1,18 +1,23 @@
-// Heatmap screen — renders the front/back body figures via the
+// Heatmap screen — renders the front/back body figures via the (forked)
 // body-highlighter library, keeps the "Needs work"/"Most trained"
 // callout cards in sync, and drives the quick-log sheet opened by
 // tapping a region. This is the hero feature of the app.
 //
 // body-highlighter (MIT, https://github.com/lahaxearnaud/body-highlighter)
-// is zero-dependency vanilla JS with a prebuilt ESM file, so it's imported
-// straight from a CDN — no npm install, no build step, matches how the
-// rest of this project runs. See docs/decisions.md for why it replaced the
-// original hand-drawn block-shape SVGs, and for why there's no
-// Simple/Advanced toggle — the SVG is the same regions either way, so the
-// former "Simple" mode was just this same data with some regions forced to
-// match colours. Painting always uses the full-precision data directly.
+// was originally CDN-imported — zero-dependency vanilla JS, no npm
+// install, no build step. It's now vendored locally as
+// js/vendor/body-highlighter.js, forked to add a `gender: 'male' |
+// 'female'` option (see docs/decisions.md "Add a female body model
+// option" for why forking was necessary and how the female geometry was
+// adapted). Everything else about it — frequency-based colouring,
+// click handling — is unchanged. See docs/decisions.md for why it
+// replaced the original hand-drawn block-shape SVGs, and for why there's
+// no Simple/Advanced toggle — the SVG is the same regions either way, so
+// the former "Simple" mode was just this same data with some regions
+// forced to match colours. Painting always uses the full-precision data
+// directly.
 
-import createBodyHighlighter from 'https://unpkg.com/body-highlighter@3/dist/body-highlighter.esm.js';
+import createBodyHighlighter from './vendor/body-highlighter.js';
 import { loadLogs } from './data.js';
 import { computeRawHeat, computeMuscleHeat, normalize, daysAgo, recencyWeight } from './heat.js';
 import { MUSCLE_TO_REGIONS } from './muscle-taxonomy.js';
@@ -117,6 +122,7 @@ let exercises = [];
 let frontHighlighter = null;
 let backHighlighter = null;
 let onQuickAdd = null; // callback from app.js, ultimately log.js's addExerciseToSession
+let currentGender = 'male';
 
 // Reads the thermal palette straight from tokens.css at runtime rather
 // than duplicating hex values here — tokens.css stays the single source
@@ -135,9 +141,10 @@ function readThermalColors() {
 // Called once from app.js. Creates the two body-highlighter instances
 // (front/back) inside their containers, wires the quick-log sheet, and
 // does the first paint.
-export async function initHeatmap(exerciseData, { onQuickAdd: onQuickAddCb } = {}) {
+export async function initHeatmap(exerciseData, { onQuickAdd: onQuickAddCb, gender } = {}) {
   exercises = exerciseData;
   onQuickAdd = onQuickAddCb || null;
+  currentGender = gender || 'male';
 
   const { bodyColor, highlightedColors } = getThermalGradient();
   const svgStyle = { width: '100%', height: 'auto' };
@@ -146,6 +153,7 @@ export async function initHeatmap(exerciseData, { onQuickAdd: onQuickAddCb } = {
   frontHighlighter = createBodyHighlighter({
     container: frontContainer,
     type: 'anterior',
+    gender: currentGender,
     bodyColor,
     highlightedColors,
     svgStyle,
@@ -154,6 +162,7 @@ export async function initHeatmap(exerciseData, { onQuickAdd: onQuickAddCb } = {
   backHighlighter = createBodyHighlighter({
     container: backContainer,
     type: 'posterior',
+    gender: currentGender,
     bodyColor,
     highlightedColors,
     svgStyle,
@@ -193,6 +202,16 @@ export function paintHeatmap() {
   backHighlighter.update({ data: libraryData });
 
   updateCallouts(raw, normalized, logs);
+}
+
+// Called by app.js when the body-model toggle changes. Only the gender
+// needs re-sending — the highlighter keeps its own last-set `data`
+// internally, so this repaints the new model with the same heat data
+// already on screen rather than needing a full paintHeatmap() re-run.
+export function setGender(gender) {
+  currentGender = gender;
+  frontHighlighter.update({ gender });
+  backHighlighter.update({ gender });
 }
 
 // Which logged sessions (within the recency window) trained a given

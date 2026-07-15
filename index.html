@@ -25,6 +25,16 @@
             <section id="screen-heatmap" class="screen active" data-screen="heatmap">
                 <div class="topbar">
                     <h1>Heatmap</h1>
+                    <!-- Which body model to paint the heatmap (and the
+                         exercise detail sheet's mini heatmap) with — see
+                         js/vendor/body-highlighter.js and
+                         docs/decisions.md "Add a female body model
+                         option". Preference persists via js/data.js's
+                         loadBodyModel()/saveBodyModel(). -->
+                    <div class="toggle-pill" data-toggle="body-model">
+                        <button class="toggle-option" data-value="male">Male</button>
+                        <button class="toggle-option" data-value="female">Female</button>
+                    </div>
                 </div>
 
                 <!-- Values start as "—" placeholders; heatmap.js fills them

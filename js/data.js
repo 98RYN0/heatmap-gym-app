@@ -3,6 +3,7 @@
 // gets in and out of storage, so the rest of the app doesn't need to.
 
 const LOGS_KEY = 'heatmap_logs';
+const BODY_MODEL_KEY = 'heatmap_body_model';
 
 // Cached after the first fetch so re-navigating screens doesn't re-request
 // the same static JSON file.
@@ -58,6 +59,18 @@ export function deleteLog(id) {
   const logs = loadLogs().filter((log) => log.id !== id);
   saveLogs(logs);
   return logs;
+}
+
+// Which body model (js/vendor/body-highlighter.js's `gender` option) to
+// paint the heatmap and exercise mini-heatmaps with. Falls back to
+// 'male' — the app's original single model — for anyone who's never set
+// a preference.
+export function loadBodyModel() {
+  return localStorage.getItem(BODY_MODEL_KEY) || 'male';
+}
+
+export function saveBodyModel(gender) {
+  localStorage.setItem(BODY_MODEL_KEY, gender);
 }
 
 // Asks the browser to exempt this origin's storage from automatic eviction

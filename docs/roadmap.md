@@ -267,11 +267,25 @@ components instead.
   a female body model option" for the full design, the coordinate-system
   derivation, and the accepted granularity gap versus the male model.
 
+## Done (2026-07-15) — Settings screen
+
+- New 4th bottom-nav tab, "Settings" — a dedicated home for app
+  preferences. The Male/Female body-model toggle moved here from the
+  Heatmap topbar (its wiring in `app.js` wasn't scoped to that screen,
+  so the move was a pure markup relocation, no JS changes). Units
+  (kg/lbs) and Theme (light/dark) show as inert "Coming soon" rows —
+  real features queued for their own passes, not built yet. See
+  `docs/decisions.md` "Settings screen."
+
 ---
 
 ## Not yet built
 
-- **Light mode** — `[data-theme="light"]` token overrides + a toggle
+- **Light mode** — `[data-theme="light"]` token overrides + a toggle;
+  has a placeholder row on the new Settings screen
+- **kg/lbs unit preference** — canonical storage stays kg, display/entry
+  respects a chosen unit everywhere weight appears (Log screen, History);
+  also has a placeholder row on Settings
 - **Training balance card** — push/pull or upper/lower split, per
   `docs/decisions.md`'s "Heatmap home screen — secondary content" decision
 - **Finer heatmap sub-muscle splits** — bicep/tricep heads, quad heads,

@@ -16,7 +16,7 @@
 <body>
     <div class="app">
         <main class="screens">
-            <!-- 3 screens, one per bottom-nav tab, plus the merged Log
+            <!-- 4 screens, one per bottom-nav tab, plus the merged Log
                  session content living inside #screen-exercises (see its
                  comment below) — only the screen with .active shows at a
                  time, switchTab() in app.js toggles it by matching
@@ -25,16 +25,6 @@
             <section id="screen-heatmap" class="screen active" data-screen="heatmap">
                 <div class="topbar">
                     <h1>Heatmap</h1>
-                    <!-- Which body model to paint the heatmap (and the
-                         exercise detail sheet's mini heatmap) with — see
-                         js/vendor/body-highlighter.js and
-                         docs/decisions.md "Add a female body model
-                         option". Preference persists via js/data.js's
-                         loadBodyModel()/saveBodyModel(). -->
-                    <div class="toggle-pill" data-toggle="body-model">
-                        <button class="toggle-option" data-value="male">Male</button>
-                        <button class="toggle-option" data-value="female">Female</button>
-                    </div>
                 </div>
 
                 <!-- Values start as "—" placeholders; heatmap.js fills them
@@ -135,6 +125,41 @@
                 </div>
             </section>
 
+            <!-- Personalisation — currently just the body-model toggle
+                 (moved here from the Heatmap topbar, a better home for
+                 it). Units and Theme are placeholder rows: real features
+                 in their own right, not wired to anything yet — see
+                 docs/roadmap.md. -->
+            <section id="screen-settings" class="screen" data-screen="settings">
+                <div class="topbar">
+                    <h1>Settings</h1>
+                </div>
+
+                <div class="settings-row">
+                    <span class="settings-row-label">Body model</span>
+                    <!-- Which body model paints the Heatmap screen and the
+                         exercise detail sheet's mini heatmap — see
+                         js/vendor/body-highlighter.js and
+                         docs/decisions.md "Add a female body model
+                         option". Preference persists via js/data.js's
+                         loadBodyModel()/saveBodyModel(). -->
+                    <div class="toggle-pill" data-toggle="body-model">
+                        <button class="toggle-option" data-value="male">Male</button>
+                        <button class="toggle-option" data-value="female">Female</button>
+                    </div>
+                </div>
+
+                <div class="settings-row">
+                    <span class="settings-row-label">Units</span>
+                    <span class="callout-meta">Coming soon</span>
+                </div>
+
+                <div class="settings-row">
+                    <span class="settings-row-label">Theme</span>
+                    <span class="callout-meta">Coming soon</span>
+                </div>
+            </section>
+
         </main>
 
         <!-- Fixed to the viewport bottom as a group so the session bar
@@ -171,6 +196,10 @@
                 <button class="nav-item" data-target="history">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8l0 4l2 2" /><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" /></svg>
                     <span class="nav-label">History</span>
+                </button>
+                <button class="nav-item" data-target="settings">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
+                    <span class="nav-label">Settings</span>
                 </button>
             </nav>
         </div>

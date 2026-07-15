@@ -89,9 +89,10 @@ requestPersistentStorage();
 // Which body model (js/vendor/body-highlighter.js's `gender` option)
 // paints the Heatmap screen and the exercise detail sheet's mini
 // heatmap — both need to agree, so it's read once here rather than each
-// module tracking its own copy. The toggle-pill lives in the Heatmap
-// topbar (see index.html) since that's where it visibly matters most,
-// but it affects both.
+// module tracking its own copy. The toggle-pill lives on the Settings
+// screen (see index.html) — this query isn't scoped to any one screen,
+// so it kept working unchanged when the toggle moved there from the
+// Heatmap topbar.
 const bodyModelToggle = document.querySelector('[data-toggle="body-model"]');
 const bodyModelOptions = bodyModelToggle.querySelectorAll('.toggle-option');
 

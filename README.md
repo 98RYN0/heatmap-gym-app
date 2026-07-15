@@ -22,7 +22,7 @@ vendored copy of [`body-highlighter`](https://github.com/lahaxearnaud/body-highl
 (`js/vendor/`, MIT) — real anatomical regions, no
 Simple/Advanced toggle (removed once it became clear the two were always
 the same diagram — see `docs/decisions.md` "Heatmap toggle removed"). A
-Male/Female toggle on the Heatmap screen switches body models — the
+Male/Female toggle on the Settings screen switches body models — the
 original library has no such option, so the fork adds one, with female
 anatomy adapted from a different MIT-licensed project (see
 `docs/decisions.md` "Add a female body model option").
@@ -50,14 +50,18 @@ session section right on the Exercises screen, and a small bar above the
 bottom nav lets you jump back to it from anywhere else while it's active.
 See `docs/decisions.md` "Merge Log into Exercises."
 
-Not yet built: light mode, the Training balance card, finer heatmap
-sub-muscle splits (bicep/tricep heads, lats vs. rhomboids — not a data
-gap, a rendering ceiling). See `docs/roadmap.md` for what's left.
+A 4th tab, Settings, is the home for app-wide preferences — just the
+body-model toggle so far, with kg/lbs units and light/dark theme queued
+as their own future passes (see `docs/decisions.md` "Settings screen").
+
+Not yet built: light mode, kg/lbs units, the Training balance card,
+finer heatmap sub-muscle splits (bicep/tricep heads, lats vs. rhomboids —
+not a data gap, a rendering ceiling). See `docs/roadmap.md` for what's left.
 
 ## Structure
 
 ```
-index.html          Single-page shell — 3 screens + bottom nav/session bar + detail sheets
+index.html          Single-page shell — 4 screens + bottom nav/session bar + detail sheets
 manifest.json        PWA manifest — installability, theme colour, icon
 sw.js                 Minimal service worker (no offline caching — see docs/decisions.md)
 css/

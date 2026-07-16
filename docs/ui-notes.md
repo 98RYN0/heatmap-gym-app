@@ -15,9 +15,17 @@ Reference file for design decisions, screen inventory, and layout notes.
 ### Colour palette
 Thermal warm/hot/max and Accent/CTA are identical in both themes —
 saturated brand/status colours that read fine against either background.
-Thermal cold tracks whichever theme's own Surface raised value, in both
-rows, so untrained muscle groups always blend into that theme's own UI
-rather than reading as a hardcoded dark blob.
+
+Thermal cold is the one exception to "shared across themes": in dark
+mode it still tracks Surface raised (untrained muscles blend into the
+UI). In light mode it's a slate blue instead, **not** tied to Surface
+raised — pairing it with light mode's near-white surface left the body
+silhouette almost invisible (`#EFEDE6` on `#FFFFFF`, ~1.1:1 contrast).
+Slate blue gives a real ~3:1 silhouette-vs-background contrast, still
+reads as "cold"/calm rather than an alert colour, and is a more literal
+thermal-camera cold-to-hot read than dark mode's "blend in" approach —
+see `docs/decisions.md` "Light mode contrast fix." Scoped to light mode
+only; dark mode's existing look wasn't flagged as a problem.
 
 | Role | Dark | Light | Usage |
 |---|---|---|---|
@@ -27,7 +35,7 @@ rather than reading as a hardcoded dark blob.
 | Border | `#3a3835` | `#DEDCD3` | Subtle borders |
 | Text primary | `#f0efe8` | `#1A1A18` | Headings, primary labels |
 | Text muted | `#888780` | `#726F66` | Secondary labels, metadata |
-| Thermal cold | `#2c2c2a` | `#EFEDE6` | Untrained muscle groups (= that theme's Surface raised) |
+| Thermal cold | `#2c2c2a` | `#7C93B0` | Untrained muscle groups (dark: = Surface raised; light: slate blue) |
 | Thermal warm | `#BA7517` | `#BA7517` | Lightly trained |
 | Thermal hot | `#EF9F27` | `#EF9F27` | Moderately trained |
 | Thermal max | `#E24B4A` | `#E24B4A` | Heavily trained |

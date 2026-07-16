@@ -57,10 +57,15 @@
    accent, and danger colours stay identical in both themes — they're
    saturated brand/status colours that read fine against either
    background, so "orange = accent"/"red = max heat" mean the same thing
-   regardless of theme. --color-heat-cold tracks --color-surface-raised
-   here exactly like it does in the dark palette above, so untrained
-   muscles still read as "just part of the UI" rather than a wrong-looking
-   dark blob on a light page. */
+   regardless of theme. --color-heat-cold does NOT track
+   --color-surface-raised here the way it does in the dark palette above —
+   pairing it with the near-white surface colour left the body silhouette
+   almost invisible (#EFEDE6 on #FFFFFF). Uses a slate blue instead: still
+   reads as "cold"/calm rather than an alert colour, gives a real ~3:1
+   silhouette-vs-background contrast, and doubles as a more literal
+   thermal-camera cold-to-hot read (blue -> amber -> orange -> red) than
+   the dark theme's "blend into the UI" approach. Dark mode is unchanged —
+   this fix is scoped to light mode's specific contrast problem. */
 :root[data-theme="light"] {
   --color-bg: #FAF9F5;
   --color-surface: #FFFFFF;
@@ -68,5 +73,5 @@
   --color-border: #DEDCD3;
   --color-text: #1A1A18;
   --color-text-muted: #726F66;
-  --color-heat-cold: #EFEDE6;
+  --color-heat-cold: #7C93B0;
 }

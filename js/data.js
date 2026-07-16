@@ -5,6 +5,7 @@
 const LOGS_KEY = 'heatmap_logs';
 const BODY_MODEL_KEY = 'heatmap_body_model';
 const WEIGHT_UNIT_KEY = 'heatmap_weight_unit';
+const THEME_KEY = 'heatmap_theme'; // kept in sync with index.html's inline anti-flash <head> script, which reads this same key name directly (it runs before any module, so it can't import this constant)
 
 // Cached after the first fetch so re-navigating screens doesn't re-request
 // the same static JSON file.
@@ -84,6 +85,18 @@ export function loadUnit() {
 
 export function saveUnit(unit) {
   localStorage.setItem(WEIGHT_UNIT_KEY, unit);
+}
+
+// Which theme to render — 'dark' or 'light'. A deliberate user choice
+// (Settings screen toggle), not a system prefers-color-scheme follow —
+// see docs/ui-notes.md "Theme". Falls back to 'dark', the app's original
+// and still-default palette.
+export function loadTheme() {
+  return localStorage.getItem(THEME_KEY) || 'dark';
+}
+
+export function saveTheme(theme) {
+  localStorage.setItem(THEME_KEY, theme);
 }
 
 // Asks the browser to exempt this origin's storage from automatic eviction

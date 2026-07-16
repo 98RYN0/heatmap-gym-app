@@ -8,10 +8,10 @@
 // comment). app.js wires everything together and hands out `switchTab` so
 // any module can navigate (e.g. Finish workout jumping back to Heatmap).
 
-import { loadExercises, requestPersistentStorage, loadBodyModel, saveBodyModel, loadUnit, saveUnit } from './data.js';
-import { initExercises, setMiniHeatmapGender } from './exercises.js';
+import { loadExercises, requestPersistentStorage, loadBodyModel, saveBodyModel, loadUnit, saveUnit, loadTheme, saveTheme } from './data.js';
+import { initExercises, setMiniHeatmapGender, setTheme as setExercisesTheme } from './exercises.js';
 import { initLog, addExerciseToSession, updateSessionBar, setUnit as setLogUnit } from './log.js';
-import { initHeatmap, paintHeatmap, setGender } from './heatmap.js';
+import { initHeatmap, paintHeatmap, setGender, setTheme as setHeatmapTheme } from './heatmap.js';
 import { initHistory, refreshHistory, setUnit as setHistoryUnit } from './history.js';
 
 const navButtons = document.querySelectorAll('.nav-item');
@@ -120,6 +120,39 @@ function setWeightUnitActiveButton(unit) {
 
 setWeightUnitActiveButton(loadUnit());
 
+// Same pattern again, for the dark/light theme. Unlike the two toggles
+// above, this one also needs to actually apply a DOM change beyond its
+// own button state — index.html's inline anti-flash <head> script
+// already set data-theme before any of this ran (if the saved
+// preference is light), so applyTheme() here mostly just re-affirms it
+// and keeps <meta name="theme-color"> (the browser chrome tint) in sync.
+// manifest.json's own theme_color/background_color stay fixed on the
+// dark values — those only govern the installed PWA's splash screen
+// before any JS runs, which can't be made per-user without a dynamic
+// manifest; accepted as a known, cosmetic-only limitation.
+const themeToggle = document.querySelector('[data-toggle="theme"]');
+const themeOptions = themeToggle.querySelectorAll('.toggle-option');
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+function setThemeActiveButton(theme) {
+  themeOptions.forEach((button) => {
+    button.classList.toggle('active', button.dataset.value === theme);
+  });
+}
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.dataset.theme = 'light';
+  } else {
+    delete document.documentElement.dataset.theme;
+  }
+  themeColorMeta.content = getComputedStyle(document.documentElement).getPropertyValue('--color-bg').trim();
+}
+
+const initialTheme = loadTheme();
+setThemeActiveButton(initialTheme);
+applyTheme(initialTheme);
+
 // Everything downstream needs the exercise database, so it's loaded first
 // and passed into each module's init function rather than each module
 // fetching it separately.
@@ -171,6 +204,19 @@ async function bootstrap() {
       saveUnit(nextUnit);
       setLogUnit(nextUnit);
       setHistoryUnit(nextUnit);
+    });
+  });
+
+  // Also wired only after both highlighters exist — setHeatmapTheme()/
+  // setExercisesTheme() push the new colours onto them directly.
+  themeOptions.forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextTheme = button.dataset.value;
+      setThemeActiveButton(nextTheme);
+      saveTheme(nextTheme);
+      applyTheme(nextTheme);
+      setHeatmapTheme();
+      setExercisesTheme();
     });
   });
 }

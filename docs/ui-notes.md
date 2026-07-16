@@ -6,25 +6,32 @@ Reference file for design decisions, screen inventory, and layout notes.
 
 ## Design language
 
-### Theme
+### Theme — RESOLVED 2026-07-16
 - Dark mode primary
-- Light mode toggle available (not a system-follow, a deliberate user choice)
+- Light mode toggle available (not a system-follow, a deliberate user
+  choice) — Settings screen, see `docs/decisions.md` "Light mode"
 - Flat, clean — no gradients, no heavy shadows
 
 ### Colour palette
-| Role | Value | Usage |
-|---|---|---|
-| Background | `#111110` | App background |
-| Surface | `#1a1a18` | Cards, heatmap area |
-| Surface raised | `#2c2c2a` | Pills, toggles, inactive elements |
-| Border | `#3a3835` | Subtle borders |
-| Text primary | `#f0efe8` | Headings, primary labels |
-| Text muted | `#888780` | Secondary labels, metadata |
-| Thermal cold | `#2c2c2a` | Untrained muscle groups |
-| Thermal warm | `#BA7517` | Lightly trained |
-| Thermal hot | `#EF9F27` | Moderately trained |
-| Thermal max | `#E24B4A` | Heavily trained |
-| Accent / CTA | `#EF9F27` | Primary buttons, active nav |
+Thermal warm/hot/max and Accent/CTA are identical in both themes —
+saturated brand/status colours that read fine against either background.
+Thermal cold tracks whichever theme's own Surface raised value, in both
+rows, so untrained muscle groups always blend into that theme's own UI
+rather than reading as a hardcoded dark blob.
+
+| Role | Dark | Light | Usage |
+|---|---|---|---|
+| Background | `#111110` | `#FAF9F5` | App background |
+| Surface | `#1a1a18` | `#FFFFFF` | Cards, heatmap area |
+| Surface raised | `#2c2c2a` | `#EFEDE6` | Pills, toggles, inactive elements |
+| Border | `#3a3835` | `#DEDCD3` | Subtle borders |
+| Text primary | `#f0efe8` | `#1A1A18` | Headings, primary labels |
+| Text muted | `#888780` | `#726F66` | Secondary labels, metadata |
+| Thermal cold | `#2c2c2a` | `#EFEDE6` | Untrained muscle groups (= that theme's Surface raised) |
+| Thermal warm | `#BA7517` | `#BA7517` | Lightly trained |
+| Thermal hot | `#EF9F27` | `#EF9F27` | Moderately trained |
+| Thermal max | `#E24B4A` | `#E24B4A` | Heavily trained |
+| Accent / CTA | `#EF9F27` | `#EF9F27` | Primary buttons, active nav |
 
 ### Typography
 - Font: system sans-serif for MVP

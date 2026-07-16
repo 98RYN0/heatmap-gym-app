@@ -214,6 +214,20 @@ export function setGender(gender) {
   backHighlighter.update({ gender });
 }
 
+// Called by app.js when the Settings screen's dark/light theme toggle
+// changes. readThermalColors() re-reads tokens.css's CSS variables fresh
+// (they've already been updated by app.js's data-theme swap by the time
+// this runs), but the two highlighters' already-rendered SVG shapes have
+// last theme's colours baked in from their last update() call — passing
+// bodyColor/highlightedColors here re-renders every shape with the new
+// palette. The heat data itself hasn't changed, so unlike paintHeatmap()
+// this doesn't touch `data` at all.
+export function setTheme() {
+  const { bodyColor, highlightedColors } = getThermalGradient();
+  frontHighlighter.update({ bodyColor, highlightedColors });
+  backHighlighter.update({ bodyColor, highlightedColors });
+}
+
 // Which logged sessions (within the recency window) trained a given
 // muscle group at all — used for the callout cards' "X days since" /
 // "X sessions" meta lines.

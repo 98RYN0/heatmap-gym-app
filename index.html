@@ -12,6 +12,19 @@
     <link rel="apple-touch-icon" href="assets/icon-180.png">
     <link rel="stylesheet" href="css/tokens.css">
     <link rel="stylesheet" href="css/styles.css">
+    <script>
+      // Applies the saved theme before first paint, synchronously — app.js
+      // is a deferred module (runs after the DOM is parsed), so without
+      // this a light-mode user would see a flash of the dark palette on
+      // every load. Duplicates js/data.js's THEME_KEY ('heatmap_theme') by
+      // necessity: this has to run before any module loads, so it can't
+      // import from data.js. Keep both in sync if the key ever changes.
+      (function () {
+        if (localStorage.getItem('heatmap_theme') === 'light') {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
 </head>
 <body>
     <div class="app">
@@ -126,10 +139,8 @@
             </section>
 
             <!-- Personalisation — body-model toggle (moved here from the
-                 Heatmap topbar, a better home for it) and the kg/lbs unit
-                 toggle. Theme is still a placeholder row: a real feature
-                 in its own right, not wired to anything yet — see
-                 docs/roadmap.md. -->
+                 Heatmap topbar, a better home for it), the kg/lbs unit
+                 toggle, and the dark/light theme toggle. -->
             <section id="screen-settings" class="screen" data-screen="settings">
                 <div class="topbar">
                     <h1>Settings</h1>
@@ -162,7 +173,15 @@
 
                 <div class="settings-row">
                     <span class="settings-row-label">Theme</span>
-                    <span class="callout-meta">Coming soon</span>
+                    <!-- Deliberate user choice, not a system-follow (see
+                         docs/ui-notes.md "Theme"). Preference persists via
+                         js/data.js's loadTheme()/saveTheme(); the actual
+                         palette swap lives in css/tokens.css's
+                         [data-theme="light"] override block. -->
+                    <div class="toggle-pill" data-toggle="theme">
+                        <button class="toggle-option" data-value="dark">Dark</button>
+                        <button class="toggle-option" data-value="light">Light</button>
+                    </div>
                 </div>
             </section>
 

@@ -50,3 +50,23 @@
   --font-weight-heading: 500;
   --font-weight-body: 400;
 }
+
+/* Light theme — a deliberate user toggle (Settings screen), not a
+   system-follow (see docs/ui-notes.md "Theme"). Only the tokens that
+   actually need to differ are overridden here; thermal warm/hot/max,
+   accent, and danger colours stay identical in both themes — they're
+   saturated brand/status colours that read fine against either
+   background, so "orange = accent"/"red = max heat" mean the same thing
+   regardless of theme. --color-heat-cold tracks --color-surface-raised
+   here exactly like it does in the dark palette above, so untrained
+   muscles still read as "just part of the UI" rather than a wrong-looking
+   dark blob on a light page. */
+:root[data-theme="light"] {
+  --color-bg: #FAF9F5;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #EFEDE6;
+  --color-border: #DEDCD3;
+  --color-text: #1A1A18;
+  --color-text-muted: #726F66;
+  --color-heat-cold: #EFEDE6;
+}

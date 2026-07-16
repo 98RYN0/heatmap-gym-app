@@ -171,6 +171,24 @@ export function setMiniHeatmapGender(gender) {
   if (sheetExercise) paintMiniHeatmap(sheetExercise);
 }
 
+// Called by app.js when the Settings screen's dark/light theme toggle
+// changes. Re-reads the (now theme-updated) colour tokens and pushes them
+// onto both mini highlighters — same mechanism as js/heatmap.js's own
+// setTheme(). bodyColorRgbString also has to be refreshed here: it's
+// zoomToHighlighted()'s reference for "this shape is still untrained,"
+// and that reference colour just changed along with the actual rendered
+// bodyColor. If a sheet is currently open, repaint it so the crop
+// reflects the new palette immediately rather than only on the next
+// exercise — same "live if open" precedent as setMiniHeatmapGender()
+// above.
+export function setTheme() {
+  const { bodyColor, bodyColorRgbString: rgbString, highlightedColors } = getThermalGradient();
+  bodyColorRgbString = rgbString;
+  miniFrontHighlighter.update({ bodyColor, highlightedColors });
+  miniBackHighlighter.update({ bodyColor, highlightedColors });
+  if (sheetExercise) paintMiniHeatmap(sheetExercise);
+}
+
 // Rolls this exercise's bias muscles up into body-highlighter regions
 // (same MUSCLE_TO_REGIONS table heat.js uses for the real heatmap) and
 // paints both mini highlighters from that alone — no logs, no recency, no

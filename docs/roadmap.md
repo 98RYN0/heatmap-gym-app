@@ -290,12 +290,25 @@ components instead.
   full design and live verification, including the accepted
   already-open-detail-sheet edge case.
 
+## Done (2026-07-16, later same day) — light mode
+
+- Settings screen's Theme row is now a working dark/light toggle — the
+  last of the three Settings placeholders. `css/tokens.css` gained a
+  `:root[data-theme="light"]` override block (background/surface/border/
+  text tokens only; thermal and accent colours stay identical across
+  themes). `js/heatmap.js` and `js/exercises.js` each gained a `setTheme()`
+  that pushes the new colours onto their already-rendered body-highlighter
+  instances live, and a small inline `<script>` in `index.html`'s `<head>`
+  applies a saved light preference before first paint so there's no
+  dark-then-light flash on load. See `docs/decisions.md` "Light mode" for
+  the full design, including the accepted manifest.json splash-screen
+  limitation and live verification (toggling mid-session with a sheet
+  open, reload-with-light-saved).
+
 ---
 
 ## Not yet built
 
-- **Light mode** — `[data-theme="light"]` token overrides + a toggle;
-  has a placeholder row on the new Settings screen
 - **Training balance card** — push/pull or upper/lower split, per
   `docs/decisions.md`'s "Heatmap home screen — secondary content" decision
 - **Finer heatmap sub-muscle splits** — bicep/tricep heads, quad heads,

@@ -55,6 +55,32 @@ Reference file for all data structures. Update as the model evolves.
 
 ---
 
+## Profile
+
+```json
+{ "name": "Ryan", "gender": "male" }
+```
+
+### Field notes
+- `name` — defaults to `''` (no greeting name shown until set — see `js/heatmap.js`'s `refreshGreeting()`). Free text, edited from the Profile sheet (Settings screen), saves instantly on blur/Enter, no separate Save button
+- `gender` — `"male"` or `"female"`. Drives which body model paints the Heatmap screen and the exercise detail sheet's mini heatmap (`js/vendor/body-highlighter.js`'s `gender` option) — used to be its own standalone Settings toggle before the Profile sheet absorbed it (see `docs/decisions.md` "Profile"). Migrated automatically from the old `heatmap_body_model` key the first time `loadProfile()` runs post-update, the same self-healing pattern `loadLogs()` uses to backfill missing ids — no one-off migration step, no lost preference for anyone who'd already picked a body model
+
+---
+
+## Weight entry
+
+```json
+{ "id": "weight-001", "date": "2026-07-16", "weight": 82.5 }
+```
+
+### Field notes
+- `id` — `crypto.randomUUID()`, same purpose as a workout log's `id`
+- `date` — one entry per calendar date; logging again on a date that already has an entry overwrites its `weight` rather than adding a duplicate (`js/data.js`'s `addWeightEntry()`) — a second same-day check-in almost always means "let me correct this," not a genuinely separate data point
+- `weight` — stored in kg, always, same canonical-storage + `convertKgToUnit()`/`convertUnitToKg()` display-boundary convention as a workout set's `weight` above. Not to be confused with exercises tagged `"bodyweight"` (see "Exercise entry") — an unrelated concept (no external load vs. a lifter's own body mass over time)
+- Logged manually from the Profile sheet (Settings screen) — no reminder/nudge to check in, by design (see `docs/decisions.md` "Profile"). Visualised as a line chart on the History screen's third "Weight" tab (`js/history.js`'s `renderWeightTrend()`), below 2 entries shows an empty-state message instead (nothing to draw a line between)
+
+---
+
 ## Heat calculation
 
 ### Per set

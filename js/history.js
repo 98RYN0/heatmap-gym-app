@@ -3,11 +3,12 @@
 // owns the log detail sheet (view/delete a single logged session) — a
 // natural fit since this screen is already "your training data over time."
 
-import { loadLogs, deleteLog } from './data.js';
-import { capitalize, todayDateString, formatSetRow } from './utils.js';
+import { loadLogs, deleteLog, loadWeightEntries } from './data.js';
+import { capitalize, todayDateString, formatSetRow, formatDate, convertKgToUnit } from './utils.js';
 
 const listView = document.querySelector('.history-view[data-view="list"]');
 const calendarView = document.querySelector('.history-view[data-view="calendar"]');
+const weightView = document.querySelector('.history-view[data-view="weight"]');
 const toggleButtons = document.querySelectorAll('[data-toggle="history-view"] .toggle-option');
 const monthLabel = document.querySelector('.calendar-month-label');
 const calendarGrid = document.querySelector('.calendar-grid');
@@ -38,12 +39,7 @@ export function initHistory(exerciseData, { onLogsChanged: onLogsChangedCb, unit
   if (unit) currentUnit = unit;
 
   toggleButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      toggleButtons.forEach((b) => b.classList.toggle('active', b === button));
-      listView.classList.toggle('active', button.dataset.value === 'list');
-      calendarView.classList.toggle('active', button.dataset.value === 'calendar');
-      if (button.dataset.value === 'calendar') renderCalendar();
-    });
+    button.addEventListener('click', () => setActiveView(button.dataset.value));
   });
 
   prevBtn.addEventListener('click', () => {
@@ -83,14 +79,38 @@ export function initHistory(exerciseData, { onLogsChanged: onLogsChangedCb, unit
 export function refreshHistory() {
   renderHistoryList();
   if (calendarView.classList.contains('active')) renderCalendar();
+  if (weightView.classList.contains('active')) renderWeightTrend();
 }
 
-// Called from app.js when the Settings screen's Units toggle changes. Only
-// affects sheets opened after this point — if the log detail sheet happens
-// to already be open, it won't retroactively re-render (same accepted
-// tradeoff as the exercise detail sheet elsewhere in the app).
+// Called from app.js when the Settings screen's Units toggle changes. The
+// log detail sheet itself won't retroactively re-render if already open
+// (same accepted tradeoff as the exercise detail sheet elsewhere in the
+// app) — but the weight trend is a whole screen view, not a sheet, so it
+// gets the live-repaint treatment other toggles already give visible content.
 export function setUnit(unit) {
   currentUnit = unit;
+  if (weightView.classList.contains('active')) renderWeightTrend();
+}
+
+// Switches the active History view programmatically — shares the toggle
+// click handler's own logic (setActiveView below) rather than duplicating
+// it, so the two stay in sync. Exported for the Profile sheet's "View
+// trend" link (js/profile.js, wired via app.js) to land directly on the
+// Weight tab.
+export function selectHistoryView(view) {
+  setActiveView(view);
+}
+
+// Toggles which .toggle-option/.history-view has .active, plus whatever
+// per-view render each one needs on becoming visible (List's own render
+// happens unconditionally elsewhere — see renderHistoryList()).
+function setActiveView(view) {
+  toggleButtons.forEach((button) => button.classList.toggle('active', button.dataset.value === view));
+  listView.classList.toggle('active', view === 'list');
+  calendarView.classList.toggle('active', view === 'calendar');
+  weightView.classList.toggle('active', view === 'weight');
+  if (view === 'calendar') renderCalendar();
+  if (view === 'weight') renderWeightTrend();
 }
 
 function sessionLabel(log) {
@@ -101,14 +121,6 @@ function sessionLabel(log) {
   const label = unique.length === 1 ? `${capitalize(unique[0])} day` : 'Mixed session';
   const count = log.exercises.length;
   return `${label} · ${count} exercise${count === 1 ? '' : 's'}`;
-}
-
-function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleDateString('default', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
 }
 
 function renderHistoryList() {
@@ -217,4 +229,60 @@ function renderCalendar() {
     cell.textContent = String(day);
     calendarGrid.appendChild(cell);
   }
+}
+
+// Fixed-size viewBox for the weight trend SVG — units below are in this
+// coordinate space, not real pixels (the SVG itself scales to its
+// container via .weight-trend-svg's width:100%/height:auto).
+const CHART_WIDTH = 300;
+const CHART_HEIGHT = 150;
+const CHART_PADDING = { top: 16, right: 12, bottom: 20, left: 12 };
+
+// Hand-rolled SVG line chart — no charting library, consistent with this
+// app's no-build-step/no-external-deps stance (same spirit as
+// heatmap.js's own buildGradient()). Below 2 entries there's nothing to
+// draw a line between, so those get an .empty-state message instead.
+function renderWeightTrend() {
+  const entries = loadWeightEntries().slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+  weightView.innerHTML = '';
+
+  if (entries.length < 2) {
+    const empty = document.createElement('p');
+    empty.className = 'empty-state';
+    empty.textContent = entries.length === 0
+      ? 'No weight logged yet — check in from Settings → Profile.'
+      : 'Log one more weigh-in to see a trend.';
+    weightView.appendChild(empty);
+    return;
+  }
+
+  const values = entries.map((entry) => convertKgToUnit(entry.weight, currentUnit));
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const valRange = maxVal - minVal || 1; // avoid a divide-by-zero if every entry is identical
+
+  const plotWidth = CHART_WIDTH - CHART_PADDING.left - CHART_PADDING.right;
+  const plotHeight = CHART_HEIGHT - CHART_PADDING.top - CHART_PADDING.bottom;
+
+  const points = entries.map((entry, i) => ({
+    x: CHART_PADDING.left + (i / (entries.length - 1)) * plotWidth,
+    y: CHART_PADDING.top + (1 - (convertKgToUnit(entry.weight, currentUnit) - minVal) / valRange) * plotHeight,
+    entry,
+  }));
+
+  const polylinePoints = points.map((p) => `${p.x},${p.y}`).join(' ');
+  const circles = points.map((p) => `<circle class="weight-trend-point" cx="${p.x}" cy="${p.y}" r="2.5" />`).join('');
+  const latest = entries[entries.length - 1];
+
+  weightView.innerHTML = `
+    <svg class="weight-trend-svg" viewBox="0 0 ${CHART_WIDTH} ${CHART_HEIGHT}">
+      <text class="weight-trend-label" x="${CHART_PADDING.left}" y="${CHART_PADDING.top - 4}">${maxVal} ${currentUnit}</text>
+      <text class="weight-trend-label" x="${CHART_PADDING.left}" y="${CHART_HEIGHT - CHART_PADDING.bottom + 10}">${minVal} ${currentUnit}</text>
+      <polyline class="weight-trend-line" points="${polylinePoints}" />
+      ${circles}
+      <text class="weight-trend-label" x="${points[0].x}" y="${CHART_HEIGHT - 4}">${formatDate(entries[0].date)}</text>
+      <text class="weight-trend-label" x="${points[points.length - 1].x}" y="${CHART_HEIGHT - 4}" text-anchor="end">${formatDate(entries[entries.length - 1].date)}</text>
+    </svg>
+    <p class="profile-weight-current">Latest: ${convertKgToUnit(latest.weight, currentUnit)} ${currentUnit} (${formatDate(latest.date)})</p>
+  `;
 }

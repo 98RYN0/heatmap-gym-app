@@ -22,9 +22,9 @@ vendored copy of [`body-highlighter`](https://github.com/lahaxearnaud/body-highl
 (`js/vendor/`, MIT) — real anatomical regions, no
 Simple/Advanced toggle (removed once it became clear the two were always
 the same diagram — see `docs/decisions.md` "Heatmap toggle removed"). A
-Male/Female toggle on the Settings screen switches body models — the
-original library has no such option, so the fork adds one, with female
-anatomy adapted from a different MIT-licensed project (see
+Male/Female toggle in the Profile sheet (Settings screen) switches body
+models — the original library has no such option, so the fork adds one,
+with female anatomy adapted from a different MIT-licensed project (see
 `docs/decisions.md` "Add a female body model option").
 
 The exercise database covers 124 exercises across 6 groups (Chest, Back,
@@ -50,15 +50,23 @@ session section right on the Exercises screen, and a small bar above the
 bottom nav lets you jump back to it from anywhere else while it's active.
 See `docs/decisions.md` "Merge Log into Exercises."
 
-A 4th tab, Settings, is the home for app-wide preferences: a body-model
-toggle, a kg/lbs unit toggle, and a dark/light theme toggle (see
-`docs/decisions.md` "Settings screen", "kg/lbs unit preference", "Light
-mode"). Weight is always stored in kg; the unit preference only affects
-how it's entered and displayed (Exercises screen's active session,
-History's log detail sheet) — see `docs/data-model.md`. The theme
-preference is a deliberate user choice, not a system-follow, and applies
-before first paint (an inline script in `index.html`'s `<head>`) so
-there's no flash of the wrong palette on load.
+A 4th tab, Settings, is the home for app-wide preferences: a Profile
+sheet (name, gender/body-model, weight check-ins), a kg/lbs unit toggle,
+and a dark/light theme toggle (see `docs/decisions.md` "Settings
+screen", "Profile: name, gender, weight check-ins + trend", "kg/lbs
+unit preference", "Light mode"). Weight is always stored in kg; the unit
+preference only affects how it's entered and displayed (Exercises
+screen's active session, History's log detail sheet, the Profile sheet's
+weight check-ins) — see `docs/data-model.md`. The theme preference is a
+deliberate user choice, not a system-follow, and applies before first
+paint (an inline script in `index.html`'s `<head>`) so there's no flash
+of the wrong palette on load.
+
+Setting a name in the Profile sheet drives a time-of-day greeting on the
+Heatmap screen ("Good morning, Ryan"); logging a weight there is a
+manual, dated check-in (no reminders) visualised as a line chart on a
+third "Weight" tab on the History screen, alongside the existing
+List/Calendar views.
 
 Not yet built: the Training balance card, finer heatmap sub-muscle splits
 (bicep/tricep heads, lats vs. rhomboids — not a data gap, a rendering
@@ -78,8 +86,8 @@ js/                  ES modules, loaded via <script type="module">
                      registers sw.js, requests persistent storage, syncs the bottom
                      chrome's height for .screens' padding
   data.js            fetch() for exercises.json, localStorage read/write for logs,
-                     storage-persistence request
-  utils.js           Small shared helpers (capitalize, local-date formatting)
+                     profile, weight entries, and every Settings preference
+  utils.js           Small shared helpers (capitalize, date formatting, kg/lbs conversion)
   muscle-taxonomy.js The 6 exercise-library groups + the real-muscle → body-highlighter
                      region mapping (js/heat.js's rollup table)
   exercises.js       Exercise library: render, search, filter, detail sheet
@@ -88,8 +96,9 @@ js/                  ES modules, loaded via <script type="module">
                      screen's session section and the persistent session bar
   heat.js            Pure heat-calc functions (no DOM): set heat, recency, normalize
   heatmap.js         Renders body figures via the vendored body-highlighter fork, paints
-                     regions + callout cards from heat.js output, quick-log sheet
-  history.js         History screen: list + calendar, log detail sheet
+                     regions + callout cards from heat.js output, quick-log sheet, greeting
+  history.js         History screen: list + calendar + weight trend, log detail sheet
+  profile.js         Profile sheet: name, gender, weight check-ins (opened from Settings)
   vendor/
     body-highlighter.js              Forked body-highlighter (MIT) — readable
                                       reimplementation, adds gender + <path> support

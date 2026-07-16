@@ -8,11 +8,12 @@
 // comment). app.js wires everything together and hands out `switchTab` so
 // any module can navigate (e.g. Finish workout jumping back to Heatmap).
 
-import { loadExercises, requestPersistentStorage, loadBodyModel, saveBodyModel, loadUnit, saveUnit, loadTheme, saveTheme } from './data.js';
+import { loadExercises, requestPersistentStorage, loadProfile, loadUnit, saveUnit, loadTheme, saveTheme } from './data.js';
 import { initExercises, setMiniHeatmapGender, setTheme as setExercisesTheme } from './exercises.js';
 import { initLog, addExerciseToSession, updateSessionBar, setUnit as setLogUnit } from './log.js';
-import { initHeatmap, paintHeatmap, setGender, setTheme as setHeatmapTheme } from './heatmap.js';
-import { initHistory, refreshHistory, setUnit as setHistoryUnit } from './history.js';
+import { initHeatmap, paintHeatmap, setGender, setTheme as setHeatmapTheme, refreshGreeting } from './heatmap.js';
+import { initHistory, refreshHistory, setUnit as setHistoryUnit, selectHistoryView } from './history.js';
+import { initProfile, setUnit as setProfileUnit } from './profile.js';
 
 const navButtons = document.querySelectorAll('.nav-item');
 const screens = document.querySelectorAll('.screen');
@@ -86,29 +87,9 @@ if ('serviceWorker' in navigator) {
 
 requestPersistentStorage();
 
-// Which body model (js/vendor/body-highlighter.js's `gender` option)
-// paints the Heatmap screen and the exercise detail sheet's mini
-// heatmap — both need to agree, so it's read once here rather than each
-// module tracking its own copy. The toggle-pill lives on the Settings
-// screen (see index.html) — this query isn't scoped to any one screen,
-// so it kept working unchanged when the toggle moved there from the
-// Heatmap topbar.
-const bodyModelToggle = document.querySelector('[data-toggle="body-model"]');
-const bodyModelOptions = bodyModelToggle.querySelectorAll('.toggle-option');
-
-function setBodyModelActiveButton(gender) {
-  bodyModelOptions.forEach((button) => {
-    button.classList.toggle('active', button.dataset.value === gender);
-  });
-}
-
-// Reflects the saved preference immediately, without waiting on the rest
-// of bootstrap() (which needs the exercise database first) — this is
-// just a class toggle, no highlighter dependency.
-setBodyModelActiveButton(loadBodyModel());
-
-// Same pattern as the body-model toggle above, for the kg/lbs weight
-// preference (see js/utils.js's convertKgToUnit/convertUnitToKg).
+// Same instant-save-on-click pattern used by every Settings toggle, for
+// the kg/lbs weight preference (see js/utils.js's convertKgToUnit/
+// convertUnitToKg).
 const weightUnitToggle = document.querySelector('[data-toggle="weight-unit"]');
 const weightUnitOptions = weightUnitToggle.querySelectorAll('.toggle-option');
 
@@ -158,7 +139,8 @@ applyTheme(initialTheme);
 // fetching it separately.
 async function bootstrap() {
   const exercises = await loadExercises();
-  const gender = loadBodyModel();
+  const profile = loadProfile();
+  const gender = profile.gender;
   const unit = loadUnit();
 
   initExercises(exercises, { onAdd: addExerciseToSession, gender });
@@ -183,18 +165,25 @@ async function bootstrap() {
     unit,
   });
 
-  // Wired only after both highlighters exist above — clicking the toggle
-  // before that (a narrow but real window during the initial exercises.json
-  // fetch) would otherwise call setGender()/setMiniHeatmapGender() while
-  // they're still null.
-  bodyModelOptions.forEach((button) => {
-    button.addEventListener('click', () => {
-      const nextGender = button.dataset.value;
-      setBodyModelActiveButton(nextGender);
-      saveBodyModel(nextGender);
-      setGender(nextGender);
-      setMiniHeatmapGender(nextGender);
-    });
+  // Wired only after both highlighters exist above — a gender change from
+  // the sheet before that (a narrow but real window during the initial
+  // exercises.json fetch) would otherwise call setGender()/
+  // setMiniHeatmapGender() while they're still null. Gender used to be
+  // its own standalone Settings toggle, wired the same way, right here —
+  // the Profile sheet (js/profile.js) absorbed it, see docs/decisions.md
+  // "Profile."
+  initProfile({
+    unit,
+    onProfileChanged: (nextProfile) => {
+      setGender(nextProfile.gender);
+      setMiniHeatmapGender(nextProfile.gender);
+      refreshGreeting();
+      refreshHistory(); // picks up a new weight entry if History's Weight tab is open
+    },
+    onViewTrend: () => {
+      switchTab('history');
+      selectHistoryView('weight');
+    },
   });
 
   weightUnitOptions.forEach((button) => {
@@ -204,6 +193,7 @@ async function bootstrap() {
       saveUnit(nextUnit);
       setLogUnit(nextUnit);
       setHistoryUnit(nextUnit);
+      setProfileUnit(nextUnit);
     });
   });
 

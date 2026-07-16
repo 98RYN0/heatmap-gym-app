@@ -25,6 +25,18 @@ export function todayDateString() {
   return `${year}-${month}-${day}`;
 }
 
+// "2026-07-16" -> "Thu, Jul 16". Originally local to history.js; moved
+// here once js/profile.js needed the same short human-readable date for
+// its "Current weight" readout, and js/history.js's weight trend needed
+// it again for chart axis labels.
+export function formatDate(dateStr) {
+  return new Date(dateStr).toLocaleDateString('default', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
 // Weight is always stored in kg (docs/data-model.md) — these two convert
 // at the display/entry boundary only, for the kg/lbs preference set on
 // the Settings screen. kg is the identity in both directions, so a value

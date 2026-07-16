@@ -305,6 +305,23 @@ components instead.
   limitation and live verification (toggling mid-session with a sheet
   open, reload-with-light-saved).
 
+## Done (2026-07-16, later still) — Profile: name, gender, weight check-ins + trend
+
+- A new Profile sheet (opened from a summary row on Settings) holds a
+  name (drives a time-of-day greeting on the Heatmap screen), a gender
+  (now the single source of truth for body model — the old standalone
+  Body model toggle is gone, absorbed into this sheet), and manual weight
+  check-ins. `js/data.js` gained `loadProfile()`/`saveProfile()` (with a
+  self-healing migration off the old `heatmap_body_model` key) and
+  `loadWeightEntries()`/`saveWeightEntries()`/`addWeightEntry()` (one
+  entry per calendar date, overwriting rather than duplicating a same-day
+  re-log). New module `js/profile.js` owns the sheet end to end. The
+  weight history renders as a hand-rolled SVG line chart on a third
+  "Weight" tab on the History screen (`js/history.js`), no reminder/nudge
+  logic — check-ins are manual only. See `docs/decisions.md` "Profile:
+  name, gender, weight check-ins + trend" for the full design and the
+  four scoping decisions made up front.
+
 ---
 
 ## Not yet built

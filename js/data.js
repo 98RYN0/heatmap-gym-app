@@ -3,7 +3,9 @@
 // gets in and out of storage, so the rest of the app doesn't need to.
 
 const LOGS_KEY = 'heatmap_logs';
-const BODY_MODEL_KEY = 'heatmap_body_model';
+const LEGACY_BODY_MODEL_KEY = 'heatmap_body_model'; // pre-Profile key, read once by loadProfile()'s migration below, never written to anymore
+const PROFILE_KEY = 'heatmap_profile';
+const WEIGHT_ENTRIES_KEY = 'heatmap_weight_entries';
 const WEIGHT_UNIT_KEY = 'heatmap_weight_unit';
 const THEME_KEY = 'heatmap_theme'; // kept in sync with index.html's inline anti-flash <head> script, which reads this same key name directly (it runs before any module, so it can't import this constant)
 
@@ -63,16 +65,55 @@ export function deleteLog(id) {
   return logs;
 }
 
-// Which body model (js/vendor/body-highlighter.js's `gender` option) to
-// paint the heatmap and exercise mini-heatmaps with. Falls back to
-// 'male' — the app's original single model — for anyone who's never set
-// a preference.
-export function loadBodyModel() {
-  return localStorage.getItem(BODY_MODEL_KEY) || 'male';
+// Personalization: name (for the Heatmap screen's greeting) and gender
+// (js/vendor/body-highlighter.js's `gender` option — which body model
+// paints the heatmap and exercise mini-heatmaps). Gender used to be its
+// own standalone Settings toggle (`heatmap_body_model`); the Profile
+// sheet (js/profile.js) absorbed it, so this migrates any value already
+// sitting in that legacy key into the new profile the first time it's
+// read, the same self-healing pattern loadLogs() uses to backfill ids —
+// no one-off migration step, no lost preference for anyone who'd already
+// picked a body model. Name defaults to '' (no greeting name shown until
+// set); gender defaults to 'male' if there's no legacy value either.
+export function loadProfile() {
+  const stored = localStorage.getItem(PROFILE_KEY);
+  if (stored) return JSON.parse(stored);
+
+  const profile = { name: '', gender: localStorage.getItem(LEGACY_BODY_MODEL_KEY) || 'male' };
+  saveProfile(profile);
+  return profile;
 }
 
-export function saveBodyModel(gender) {
-  localStorage.setItem(BODY_MODEL_KEY, gender);
+export function saveProfile(profile) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+}
+
+// Weight check-ins over time (Profile sheet's "Log weight") — always in
+// kg (see js/utils.js's convertKgToUnit/convertUnitToKg), same canonical-
+// storage convention as workout set weights. Not to be confused with
+// exercises tagged "bodyweight" (js/data-model.md) — an unrelated concept.
+export function loadWeightEntries() {
+  return JSON.parse(localStorage.getItem(WEIGHT_ENTRIES_KEY) || '[]');
+}
+
+export function saveWeightEntries(entries) {
+  localStorage.setItem(WEIGHT_ENTRIES_KEY, JSON.stringify(entries));
+}
+
+// One weigh-in per calendar date — logging again on a date that already
+// has an entry overwrites its weight rather than pushing a duplicate,
+// since a second same-day check-in almost always means "I mistyped" or
+// "let me correct this," not a genuinely separate data point.
+export function addWeightEntry(date, weightKg) {
+  const entries = loadWeightEntries();
+  const existing = entries.find((entry) => entry.date === date);
+  if (existing) {
+    existing.weight = weightKg;
+  } else {
+    entries.push({ id: crypto.randomUUID(), date, weight: weightKg });
+  }
+  saveWeightEntries(entries);
+  return entries;
 }
 
 // Which unit weight is entered/displayed in — 'kg' or 'lbs'. Storage

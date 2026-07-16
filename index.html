@@ -40,6 +40,12 @@
                     <h1>Heatmap</h1>
                 </div>
 
+                <!-- Time-of-day + name (js/heatmap.js's refreshGreeting()),
+                     e.g. "Good morning, Ryan" — falls back to just the
+                     time-of-day phrase until a name is set in the Profile
+                     sheet (Settings). -->
+                <p class="greeting"></p>
+
                 <!-- Values start as "—" placeholders; heatmap.js fills them
                      in once there's real workout data to compute from. -->
                 <div class="callouts">
@@ -117,6 +123,7 @@
                         <div class="toggle-pill" data-toggle="history-view">
                             <button class="toggle-option active" data-value="list">List</button>
                             <button class="toggle-option" data-value="calendar">Calendar</button>
+                            <button class="toggle-option" data-value="weight">Weight</button>
                         </div>
                     </div>
                 </div>
@@ -136,29 +143,36 @@
                     <!-- Rebuilt every month navigation by history.js's renderCalendar(). -->
                     <div class="calendar-grid"></div>
                 </div>
+
+                <!-- Populated by history.js's renderWeightTrend() — a
+                     hand-rolled SVG line chart of Profile weigh-ins over
+                     time (js/profile.js), or an .empty-state message
+                     below 2 entries (nothing to draw a line between). -->
+                <div class="history-view" data-view="weight"></div>
             </section>
 
-            <!-- Personalisation — body-model toggle (moved here from the
-                 Heatmap topbar, a better home for it), the kg/lbs unit
-                 toggle, and the dark/light theme toggle. -->
+            <!-- Personalisation — a Profile row (name/gender/weight, in a
+                 sheet — see #profile-sheet below and js/profile.js), the
+                 kg/lbs unit toggle, and the dark/light theme toggle. -->
             <section id="screen-settings" class="screen" data-screen="settings">
                 <div class="topbar">
                     <h1>Settings</h1>
                 </div>
 
-                <div class="settings-row">
-                    <span class="settings-row-label">Body model</span>
-                    <!-- Which body model paints the Heatmap screen and the
-                         exercise detail sheet's mini heatmap — see
-                         js/vendor/body-highlighter.js and
-                         docs/decisions.md "Add a female body model
-                         option". Preference persists via js/data.js's
-                         loadBodyModel()/saveBodyModel(). -->
-                    <div class="toggle-pill" data-toggle="body-model">
-                        <button class="toggle-option" data-value="male">Male</button>
-                        <button class="toggle-option" data-value="female">Female</button>
-                    </div>
-                </div>
+                <!-- A real <button>, not a <div>, since this opens a sheet
+                     (js/profile.js) — same "interactive element, not a div
+                     with a click listener" reasoning as .session-bar. The
+                     summary span shows the saved name, or a placeholder
+                     until one's set. Gender (which used to be its own
+                     standalone Body model toggle here) now lives inside
+                     the sheet — see docs/decisions.md "Profile". -->
+                <button class="settings-row settings-row-link" id="profile-row">
+                    <span class="settings-row-label">Profile</span>
+                    <span class="settings-row-value">
+                        <span id="profile-row-summary">Set up your profile</span>
+                        <span aria-hidden="true">›</span>
+                    </span>
+                </button>
 
                 <div class="settings-row">
                     <span class="settings-row-label">Units</span>
@@ -301,6 +315,49 @@
                 </div>
                 <ul class="session-list"></ul>
                 <button class="cta-danger" id="delete-log-btn">Delete workout</button>
+            </div>
+        </div>
+
+        <!-- Profile sheet — opened from the Settings screen's Profile row
+             (js/profile.js). Name + gender save instantly on change, same
+             as every other Settings toggle; weight is a distinct "Log
+             weight" action (js/data.js's addWeightEntry()), since each
+             one is a dated check-in, not just an edited field. -->
+        <div class="sheet-overlay" id="profile-sheet">
+            <div class="sheet-backdrop"></div>
+            <div class="sheet">
+                <div class="sheet-handle"></div>
+                <div class="sheet-header">
+                    <div>
+                        <h2 class="sheet-title">Profile</h2>
+                    </div>
+                    <button class="sheet-close icon-button">✕</button>
+                </div>
+
+                <p class="section-heading">Name</p>
+                <!-- Reuses .search-input's bordered full-width text-field
+                     look rather than a near-duplicate class — it's not a
+                     search field, just the same visual shape. -->
+                <input class="search-input" id="profile-name-input" type="text" placeholder="Your name" maxlength="40">
+
+                <p class="section-heading">Body model</p>
+                <!-- Drives which body model paints the Heatmap screen and
+                     the exercise detail sheet's mini heatmap — see
+                     js/vendor/body-highlighter.js and docs/decisions.md
+                     "Add a female body model option." Used to be its own
+                     standalone Settings toggle; now lives here instead. -->
+                <div class="toggle-pill" data-toggle="profile-gender">
+                    <button class="toggle-option" data-value="male">Male</button>
+                    <button class="toggle-option" data-value="female">Female</button>
+                </div>
+
+                <p class="section-heading">Weight</p>
+                <p class="profile-weight-current" id="profile-weight-current">No weight logged yet</p>
+                <div class="set-form">
+                    <input class="set-input" id="profile-weight-input" type="number" placeholder="kg" min="0" step="0.1">
+                    <button class="add-set-btn" id="log-weight-btn">Log weight</button>
+                </div>
+                <button class="text-action" id="view-trend-btn">View trend →</button>
             </div>
         </div>
     </div>

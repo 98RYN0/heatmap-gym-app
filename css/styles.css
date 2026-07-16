@@ -227,6 +227,15 @@ button:focus-visible {
 
 /* Heatmap screen */
 
+/* js/heatmap.js's refreshGreeting() — sits between .topbar and .callouts;
+   no bottom padding of its own since .callouts already has top padding,
+   which is enough of a gap on its own without doubling up. */
+.greeting {
+  padding: var(--space-md) var(--space-md) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-body);
+}
+
 .callouts {
   display: flex;
   gap: var(--space-sm);
@@ -645,6 +654,33 @@ button:focus-visible {
   outline: 2px solid var(--color-accent);
 }
 
+/* Weight trend — history.js's renderWeightTrend(), a hand-rolled SVG line
+   chart (no charting library, consistent with this app's no-build-step/
+   no-external-deps stance). Sized to its container; polyline/circles use
+   the accent colour so it reads as the same "your data, highlighted"
+   language as .cta-primary/.calendar-day.trained elsewhere. */
+.weight-trend-svg {
+  width: 100%;
+  height: auto;
+}
+
+.weight-trend-line {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.weight-trend-point {
+  fill: var(--color-accent);
+}
+
+.weight-trend-label {
+  fill: var(--color-text-muted);
+  font-size: 6px; /* matches the chart's small internal viewBox units, not --font-size-* (those are real px for HTML text) */
+}
+
 /* Exercise detail sheet — a backdrop + a bottom-anchored panel that slides
    up. Toggled purely via the .open class (see exercises.js openSheet/closeSheet). */
 
@@ -753,6 +789,12 @@ button:focus-visible {
   letter-spacing: 0.04em;
 }
 
+/* Profile sheet's "Current weight" readout, above the log-weight form. */
+.profile-weight-current {
+  font-size: var(--font-size-body);
+  margin-bottom: var(--space-sm);
+}
+
 /* Settings screen */
 
 .settings-row {
@@ -766,4 +808,33 @@ button:focus-visible {
 
 .settings-row-label {
   font-weight: var(--font-weight-heading);
+}
+
+/* The one settings-row that's a <button> rather than a <div> — it opens
+   the Profile sheet (js/profile.js), so it needs the same "real
+   interactive element" treatment as .session-bar. Buttons don't default
+   to block/full-width the way divs did, so those need restating here;
+   everything else (.settings-row's flex/padding/border) is inherited
+   for free since this still carries that class too. */
+.settings-row-link {
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font-size: inherit;
+}
+
+.settings-row-link:hover {
+  background: var(--color-surface);
+}
+
+.settings-row-value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
 }

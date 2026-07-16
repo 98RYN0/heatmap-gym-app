@@ -18,10 +18,12 @@
 // directly.
 
 import createBodyHighlighter from './vendor/body-highlighter.js';
-import { loadLogs } from './data.js';
+import { loadLogs, loadProfile } from './data.js';
 import { computeRawHeat, computeMuscleHeat, normalize, daysAgo, recencyWeight } from './heat.js';
 import { MUSCLE_TO_REGIONS } from './muscle-taxonomy.js';
 import { formatMuscleName } from './utils.js';
+
+const greetingEl = document.querySelector('.greeting');
 
 // The library colours a muscle by counting how many entries in its `data`
 // array mention it (that's "frequency"), not by a continuous value — so a
@@ -179,7 +181,21 @@ export async function initHeatmap(exerciseData, { onQuickAdd: onQuickAddCb, gend
   quickLogBackdrop.addEventListener('click', closeQuickLogSheet);
   quickLogClose.addEventListener('click', closeQuickLogSheet);
 
+  refreshGreeting();
   paintHeatmap();
+}
+
+// Time-of-day + name (Profile sheet, js/profile.js), e.g. "Good morning,
+// Ryan" — falls back to just the time-of-day phrase until a name is set.
+// Reads loadProfile() directly rather than taking a param (same
+// self-contained data-access convention as loadLogs() elsewhere in this
+// file) — called once at init above, and again by app.js's
+// onProfileChanged callback whenever the name changes.
+export function refreshGreeting() {
+  const hour = new Date().getHours();
+  const timeOfDay = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const { name } = loadProfile();
+  greetingEl.textContent = name ? `${timeOfDay}, ${name}` : timeOfDay;
 }
 
 // Recomputes heat from the current logs and repaints both body views.

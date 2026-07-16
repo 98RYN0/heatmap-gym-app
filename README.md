@@ -50,13 +50,17 @@ session section right on the Exercises screen, and a small bar above the
 bottom nav lets you jump back to it from anywhere else while it's active.
 See `docs/decisions.md` "Merge Log into Exercises."
 
-A 4th tab, Settings, is the home for app-wide preferences — just the
-body-model toggle so far, with kg/lbs units and light/dark theme queued
-as their own future passes (see `docs/decisions.md` "Settings screen").
+A 4th tab, Settings, is the home for app-wide preferences — the
+body-model toggle and a kg/lbs unit toggle so far, with light/dark theme
+queued as its own future pass (see `docs/decisions.md` "Settings screen",
+"kg/lbs unit preference"). Weight is always stored in kg; the unit
+preference only affects how it's entered and displayed (Exercises
+screen's active session, History's log detail sheet) — see
+`docs/data-model.md`.
 
-Not yet built: light mode, kg/lbs units, the Training balance card,
-finer heatmap sub-muscle splits (bicep/tricep heads, lats vs. rhomboids —
-not a data gap, a rendering ceiling). See `docs/roadmap.md` for what's left.
+Not yet built: light mode, the Training balance card, finer heatmap
+sub-muscle splits (bicep/tricep heads, lats vs. rhomboids — not a data
+gap, a rendering ceiling). See `docs/roadmap.md` for what's left.
 
 ## Structure
 

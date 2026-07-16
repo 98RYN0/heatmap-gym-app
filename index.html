@@ -125,10 +125,10 @@
                 </div>
             </section>
 
-            <!-- Personalisation — currently just the body-model toggle
-                 (moved here from the Heatmap topbar, a better home for
-                 it). Units and Theme are placeholder rows: real features
-                 in their own right, not wired to anything yet — see
+            <!-- Personalisation — body-model toggle (moved here from the
+                 Heatmap topbar, a better home for it) and the kg/lbs unit
+                 toggle. Theme is still a placeholder row: a real feature
+                 in its own right, not wired to anything yet — see
                  docs/roadmap.md. -->
             <section id="screen-settings" class="screen" data-screen="settings">
                 <div class="topbar">
@@ -151,7 +151,13 @@
 
                 <div class="settings-row">
                     <span class="settings-row-label">Units</span>
-                    <span class="callout-meta">Coming soon</span>
+                    <!-- Display/entry unit for weight — storage is always kg
+                         (docs/data-model.md). Preference persists via
+                         js/data.js's loadUnit()/saveUnit(). -->
+                    <div class="toggle-pill" data-toggle="weight-unit">
+                        <button class="toggle-option" data-value="kg">kg</button>
+                        <button class="toggle-option" data-value="lbs">lbs</button>
+                    </div>
                 </div>
 
                 <div class="settings-row">

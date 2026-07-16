@@ -29,11 +29,13 @@ let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth(); // 0-indexed (0 = January), same as the Date API
 let onLogsChanged = null; // callback from app.js — repaints the heatmap, since deleting a log changes its data
 let openLogId = null; // which log the detail sheet is currently showing, for the delete button
+let currentUnit = 'kg'; // display unit for weight in the log detail sheet — storage is always kg, see js/utils.js
 
 // Called once from app.js.
-export function initHistory(exerciseData, { onLogsChanged: onLogsChangedCb } = {}) {
+export function initHistory(exerciseData, { onLogsChanged: onLogsChangedCb, unit } = {}) {
   exercises = exerciseData;
   onLogsChanged = onLogsChangedCb || null;
+  if (unit) currentUnit = unit;
 
   toggleButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -81,6 +83,14 @@ export function initHistory(exerciseData, { onLogsChanged: onLogsChangedCb } = {
 export function refreshHistory() {
   renderHistoryList();
   if (calendarView.classList.contains('active')) renderCalendar();
+}
+
+// Called from app.js when the Settings screen's Units toggle changes. Only
+// affects sheets opened after this point — if the log detail sheet happens
+// to already be open, it won't retroactively re-render (same accepted
+// tradeoff as the exercise detail sheet elsewhere in the app).
+export function setUnit(unit) {
+  currentUnit = unit;
 }
 
 function sessionLabel(log) {
@@ -144,7 +154,7 @@ function openLogDetailSheet(log) {
         <span class="exercise-meta">${exercise ? exercise.muscleGroup : ''}</span>
       </div>
       <div class="set-rows">
-        ${entry.sets.map((set, i) => formatSetRow(set, i)).join('')}
+        ${entry.sets.map((set, i) => formatSetRow(set, i, currentUnit)).join('')}
       </div>
     `;
     logSheetList.appendChild(li);

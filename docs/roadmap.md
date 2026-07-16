@@ -277,15 +277,25 @@ components instead.
   real features queued for their own passes, not built yet. See
   `docs/decisions.md` "Settings screen."
 
+## Done (2026-07-16) — kg/lbs unit preference
+
+- The Settings screen's Units row is now a working kg/lbs toggle, not a
+  placeholder. Canonical storage stays kg everywhere — weight doesn't
+  feed any calculation, so this only affects entry/display: the active
+  session's set inputs and rows (Exercises screen), and History's log
+  detail sheet. `js/utils.js` gained `convertKgToUnit()`/
+  `convertUnitToKg()` (kg is an exact identity, lbs rounds to the
+  nearest 0.5 for display only); `js/data.js` gained `loadUnit()`/
+  `saveUnit()`. See `docs/decisions.md` "kg/lbs unit preference" for the
+  full design and live verification, including the accepted
+  already-open-detail-sheet edge case.
+
 ---
 
 ## Not yet built
 
 - **Light mode** — `[data-theme="light"]` token overrides + a toggle;
   has a placeholder row on the new Settings screen
-- **kg/lbs unit preference** — canonical storage stays kg, display/entry
-  respects a chosen unit everywhere weight appears (Log screen, History);
-  also has a placeholder row on Settings
 - **Training balance card** — push/pull or upper/lower split, per
   `docs/decisions.md`'s "Heatmap home screen — secondary content" decision
 - **Finer heatmap sub-muscle splits** — bicep/tricep heads, quad heads,

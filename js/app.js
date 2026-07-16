@@ -8,11 +8,11 @@
 // comment). app.js wires everything together and hands out `switchTab` so
 // any module can navigate (e.g. Finish workout jumping back to Heatmap).
 
-import { loadExercises, requestPersistentStorage, loadBodyModel, saveBodyModel } from './data.js';
+import { loadExercises, requestPersistentStorage, loadBodyModel, saveBodyModel, loadUnit, saveUnit } from './data.js';
 import { initExercises, setMiniHeatmapGender } from './exercises.js';
-import { initLog, addExerciseToSession, updateSessionBar } from './log.js';
+import { initLog, addExerciseToSession, updateSessionBar, setUnit as setLogUnit } from './log.js';
 import { initHeatmap, paintHeatmap, setGender } from './heatmap.js';
-import { initHistory, refreshHistory } from './history.js';
+import { initHistory, refreshHistory, setUnit as setHistoryUnit } from './history.js';
 
 const navButtons = document.querySelectorAll('.nav-item');
 const screens = document.querySelectorAll('.screen');
@@ -107,12 +107,26 @@ function setBodyModelActiveButton(gender) {
 // just a class toggle, no highlighter dependency.
 setBodyModelActiveButton(loadBodyModel());
 
+// Same pattern as the body-model toggle above, for the kg/lbs weight
+// preference (see js/utils.js's convertKgToUnit/convertUnitToKg).
+const weightUnitToggle = document.querySelector('[data-toggle="weight-unit"]');
+const weightUnitOptions = weightUnitToggle.querySelectorAll('.toggle-option');
+
+function setWeightUnitActiveButton(unit) {
+  weightUnitOptions.forEach((button) => {
+    button.classList.toggle('active', button.dataset.value === unit);
+  });
+}
+
+setWeightUnitActiveButton(loadUnit());
+
 // Everything downstream needs the exercise database, so it's loaded first
 // and passed into each module's init function rather than each module
 // fetching it separately.
 async function bootstrap() {
   const exercises = await loadExercises();
   const gender = loadBodyModel();
+  const unit = loadUnit();
 
   initExercises(exercises, { onAdd: addExerciseToSession, gender });
   // onQuickAdd reuses the exact same "add to session" action as the
@@ -123,6 +137,7 @@ async function bootstrap() {
     // Deleting a single log changes the data the heatmap is computed
     // from, so it needs the same repaint finishing a session triggers.
     onLogsChanged: paintHeatmap,
+    unit,
   });
   initLog(exercises, {
     switchTab,
@@ -132,6 +147,7 @@ async function bootstrap() {
       paintHeatmap();
       refreshHistory();
     },
+    unit,
   });
 
   // Wired only after both highlighters exist above — clicking the toggle
@@ -145,6 +161,16 @@ async function bootstrap() {
       saveBodyModel(nextGender);
       setGender(nextGender);
       setMiniHeatmapGender(nextGender);
+    });
+  });
+
+  weightUnitOptions.forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextUnit = button.dataset.value;
+      setWeightUnitActiveButton(nextUnit);
+      saveUnit(nextUnit);
+      setLogUnit(nextUnit);
+      setHistoryUnit(nextUnit);
     });
   });
 }

@@ -7,7 +7,7 @@
 // library. See docs/decisions.md "Merge Log into Exercises."
 
 import { addLog } from './data.js';
-import { todayDateString } from './utils.js';
+import { todayDateString, convertKgToUnit, convertUnitToKg } from './utils.js';
 
 const sessionSection = document.getElementById('session-section');
 const sessionList = document.querySelector('.session-list');
@@ -19,20 +19,31 @@ let exercisesById = new Map(); // built once from the exercise list for O(1) loo
 let currentSession = { exercises: [] };
 let switchTabFn = null; // injected from app.js so this module can navigate without importing app.js
 let onFinished = null; // callback app.js uses to repaint the heatmap/history after a session is saved
+let currentUnit = 'kg'; // display/entry unit for weight — storage is always kg, see js/utils.js
 // At most one set across the whole session can be mid-edit at a time —
 // tracked by object reference (which exercise entry, which index into its
 // sets array) rather than a per-card flag, since cards are thrown away and
 // rebuilt on every renderSession() call anyway.
 let editingSet = null; // { entry, index } | null
 
-export function initLog(exercises, { switchTab, onFinished: onFinishedCb } = {}) {
+export function initLog(exercises, { switchTab, onFinished: onFinishedCb, unit } = {}) {
   exercisesById = new Map(exercises.map((ex) => [ex.id, ex]));
   switchTabFn = switchTab;
   onFinished = onFinishedCb;
+  if (unit) currentUnit = unit;
 
   finishBtn.addEventListener('click', finishSession);
   sessionBar.addEventListener('click', () => switchTabFn('exercises'));
 
+  renderSession();
+}
+
+// Called from app.js when the Settings screen's Units toggle changes.
+// Re-renders immediately so an active session's displayed weights (and
+// the add-set form's placeholder) reflect the new unit right away,
+// rather than waiting for the next unrelated re-render.
+export function setUnit(unit) {
+  currentUnit = unit;
   renderSession();
 }
 
@@ -104,7 +115,7 @@ function buildExerciseCard(entry) {
     </div>
     <div class="set-form">
       <input type="number" class="set-input" data-field="reps" placeholder="Reps" min="0">
-      ${isBodyweight ? '' : '<input type="number" class="set-input" data-field="weight" placeholder="kg" min="0" step="0.5">'}
+      ${isBodyweight ? '' : `<input type="number" class="set-input" data-field="weight" placeholder="${currentUnit}" min="0" step="0.5">`}
       <input type="number" class="set-input" data-field="rpe" placeholder="RPE" min="1" max="10">
       <button class="add-set-btn">+ Add set</button>
     </div>
@@ -135,7 +146,7 @@ function buildExerciseCard(entry) {
       reps: Number(repsInput.value),
       rpe: Number(rpeInput.value),
     };
-    if (weightInput) set.weight = Number(weightInput.value);
+    if (weightInput) set.weight = convertUnitToKg(weightInput.value, currentUnit);
     entry.sets.push(set);
     renderSession(); // re-render clears the inputs and shows the new set row
   });
@@ -167,7 +178,7 @@ function buildExerciseCard(entry) {
       const editWeightInput = row.querySelector('[data-edit-field="weight"]');
       if (!repsVal || !rpeVal || (editWeightInput && !editWeightInput.value)) return;
       const updated = { reps: Number(repsVal), rpe: Number(rpeVal) };
-      if (editWeightInput) updated.weight = Number(editWeightInput.value);
+      if (editWeightInput) updated.weight = convertUnitToKg(editWeightInput.value, currentUnit);
       entry.sets[index] = updated;
       editingSet = null;
       renderSession();
@@ -190,7 +201,7 @@ function buildSetRowHTML(entry, isBodyweight, index) {
     return `
       <div class="set-row set-row-editing" data-set-index="${index}">
         <input type="number" class="set-input" data-edit-field="reps" value="${set.reps}" min="0">
-        ${isBodyweight ? '' : `<input type="number" class="set-input" data-edit-field="weight" value="${set.weight}" min="0" step="0.5">`}
+        ${isBodyweight ? '' : `<input type="number" class="set-input" data-edit-field="weight" value="${convertKgToUnit(set.weight, currentUnit)}" min="0" step="0.5">`}
         <input type="number" class="set-input" data-edit-field="rpe" value="${set.rpe}" min="1" max="10">
         <button class="set-action-btn save-set-btn" aria-label="Save set" title="Save set">✓</button>
         <button class="set-action-btn cancel-edit-btn" aria-label="Cancel edit" title="Cancel edit">✕</button>
@@ -202,7 +213,7 @@ function buildSetRowHTML(entry, isBodyweight, index) {
     <div class="set-row" data-set-index="${index}">
       <span>#${index + 1}</span>
       <span>${set.reps} reps</span>
-      ${set.weight != null ? `<span>${set.weight} kg</span>` : ''}
+      ${set.weight != null ? `<span>${convertKgToUnit(set.weight, currentUnit)} ${currentUnit}</span>` : ''}
       <span>RPE ${set.rpe}</span>
       <span class="set-row-actions">
         <button class="set-action-btn duplicate-set-btn" aria-label="Duplicate set" title="Duplicate set">⧉</button>

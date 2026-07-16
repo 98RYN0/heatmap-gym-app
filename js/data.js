@@ -4,6 +4,7 @@
 
 const LOGS_KEY = 'heatmap_logs';
 const BODY_MODEL_KEY = 'heatmap_body_model';
+const WEIGHT_UNIT_KEY = 'heatmap_weight_unit';
 
 // Cached after the first fetch so re-navigating screens doesn't re-request
 // the same static JSON file.
@@ -71,6 +72,18 @@ export function loadBodyModel() {
 
 export function saveBodyModel(gender) {
   localStorage.setItem(BODY_MODEL_KEY, gender);
+}
+
+// Which unit weight is entered/displayed in — 'kg' or 'lbs'. Storage
+// itself is always kg (see js/utils.js's convertKgToUnit/convertUnitToKg);
+// this only controls the display/entry boundary. Falls back to 'kg',
+// matching every set logged before this preference existed.
+export function loadUnit() {
+  return localStorage.getItem(WEIGHT_UNIT_KEY) || 'kg';
+}
+
+export function saveUnit(unit) {
+  localStorage.setItem(WEIGHT_UNIT_KEY, unit);
 }
 
 // Asks the browser to exempt this origin's storage from automatic eviction

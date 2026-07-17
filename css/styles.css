@@ -78,6 +78,35 @@ button:focus-visible {
   font-weight: var(--font-weight-heading);
 }
 
+/* App wordmark (assets/atlas-logo.png) stands in for each screen's plain
+   text title — see docs/decisions.md "Atlas wordmark header". A
+   background-image on a plain span rather than an <img src>, so the
+   light/dark swap below is pure CSS with no JS involved (role="img" +
+   aria-label on the element itself cover accessibility instead of alt
+   text). Sized by aspect-ratio off the source PNG's own cropped
+   dimensions (1444x338) rather than a hand-guessed width, so it can't
+   drift out of proportion if the asset's ever re-exported at a
+   different size. */
+.topbar-logo {
+  display: inline-block;
+  height: 22px;
+  aspect-ratio: 1444 / 338;
+  background-image: url('../assets/atlas-logo.png');
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+}
+
+/* The source wordmark is white/chrome — invisible against light mode's
+   near-white surface. atlas-logo-light.png is the same asset with only
+   its achromatic (white/grey) pixels flattened to a dark fill; the
+   orange->red triangle/pulse-line accent is untouched, same "accent
+   stays constant across themes, only text flips" convention tokens.css
+   already uses for --color-heat-cold vs. --color-heat-warm/hot/max. */
+:root[data-theme="light"] .topbar-logo {
+  background-image: url('../assets/atlas-logo-light.png');
+}
+
 .topbar-actions {
   display: flex;
   align-items: center;

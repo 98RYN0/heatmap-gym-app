@@ -322,6 +322,22 @@ components instead.
   name, gender, weight check-ins + trend" for the full design and the
   four scoping decisions made up front.
 
+## Done (2026-07-17) — Atlas wordmark header
+
+- Ryan's stylised "Atlas" wordmark (`assets/Atlas Logo.png`) now stands
+  in for the plain text title on every screen's topbar (Heatmap/
+  Exercises/History/Settings), not just the home screen. The supplied
+  PNG's solid near-black background was chroma-keyed to transparency and
+  cropped to the artwork's own bounding box (PowerShell + `System.
+  Drawing`, no Node/Python needed); a second, light-theme-only variant
+  has just the wordmark's white/chrome pixels flattened to a dark fill
+  so it stays visible against the light theme's near-white surface, with
+  the orange-to-red accent left untouched in both. The light/dark swap
+  is pure CSS (`.topbar-logo`'s `background-image`, overridden under
+  `[data-theme="light"]`) — no JavaScript involved. See
+  `docs/decisions.md` "Atlas wordmark header" for the full image-
+  processing approach and live verification.
+
 ---
 
 ## Not yet built

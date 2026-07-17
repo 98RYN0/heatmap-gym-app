@@ -8,6 +8,11 @@ A mobile-first PWA that shows which muscle groups you've trained recently as a
 thermal heatmap, so intuitive lifters can spot gaps in their training without
 following a fixed program.
 
+Every screen's topbar carries a stylised "Atlas" wordmark in place of a
+plain text title (see `docs/decisions.md` "Atlas wordmark header") — a
+light-theme-specific variant keeps it visible against that palette's
+near-white surface, swapped in via pure CSS with no JavaScript.
+
 ## Status
 
 The core loop works end to end: browse/search the exercise library, add

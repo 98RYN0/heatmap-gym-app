@@ -36,8 +36,17 @@
                  data-target (nav button) to data-screen (section). -->
 
             <section id="screen-heatmap" class="screen active" data-screen="heatmap">
+                <!-- App wordmark (assets/atlas-logo.png, assets/README.md)
+                     stands in for the plain text title on every screen —
+                     see docs/decisions.md "Atlas wordmark header". A
+                     span, not an <img>, so the light/dark swap is pure
+                     CSS (.topbar-logo's background-image, overridden
+                     under [data-theme="light"]) with no JS involved;
+                     role="img" + a per-screen aria-label keeps a screen
+                     reader's "which screen am I on" cue that a sighted
+                     user now gets from the bottom nav instead. -->
                 <div class="topbar">
-                    <h1>Heatmap</h1>
+                    <h1><span class="topbar-logo" role="img" aria-label="Atlas — Heatmap"></span></h1>
                 </div>
 
                 <!-- Time-of-day + name (js/heatmap.js's refreshGreeting()),
@@ -82,7 +91,7 @@
                  Exercises." -->
             <section id="screen-exercises" class="screen" data-screen="exercises">
                 <div class="topbar">
-                    <h1>Exercises</h1>
+                    <h1><span class="topbar-logo" role="img" aria-label="Atlas — Exercises"></span></h1>
                     <button class="text-action" id="finish-session-btn" hidden>Finish</button>
                 </div>
 
@@ -118,7 +127,7 @@
 
             <section id="screen-history" class="screen" data-screen="history">
                 <div class="topbar">
-                    <h1>History</h1>
+                    <h1><span class="topbar-logo" role="img" aria-label="Atlas — History"></span></h1>
                     <div class="topbar-actions">
                         <div class="toggle-pill" data-toggle="history-view">
                             <button class="toggle-option active" data-value="list">List</button>
@@ -156,7 +165,7 @@
                  kg/lbs unit toggle, and the dark/light theme toggle. -->
             <section id="screen-settings" class="screen" data-screen="settings">
                 <div class="topbar">
-                    <h1>Settings</h1>
+                    <h1><span class="topbar-logo" role="img" aria-label="Atlas — Settings"></span></h1>
                 </div>
 
                 <!-- A real <button>, not a <div>, since this opens a sheet

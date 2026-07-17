@@ -266,13 +266,17 @@ button:focus-visible {
 
 /* Heatmap screen */
 
-/* js/heatmap.js's refreshGreeting() — sits between .topbar and .callouts;
-   no bottom padding of its own since .callouts already has top padding,
-   which is enough of a gap on its own without doubling up. */
+/* js/heatmap.js's refreshGreeting() — sits between .topbar and .callouts.
+   The largest, highest-contrast text in the app (--font-size-hero, full
+   --color-text rather than the muted tone this started with) — since the
+   topbar no longer carries a text title (replaced by the Atlas wordmark,
+   see docs/decisions.md "Atlas wordmark header"), this greeting is the
+   closest thing the Heatmap screen has to a page headline now. */
 .greeting {
   padding: var(--space-md) var(--space-md) 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-body);
+  color: var(--color-text);
+  font-size: var(--font-size-hero);
+  font-weight: var(--font-weight-heading);
 }
 
 .callouts {

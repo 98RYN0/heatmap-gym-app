@@ -44,8 +44,9 @@
 
   --font-size-label: 0.75rem;   /* 12px — meta/labels */
   --font-size-body: 0.875rem;   /* 14px — body text */
-  --font-size-heading: 1.125rem;/* 18px — screen titles */
+  --font-size-heading: 1.125rem;/* 18px — sheet/section headings */
   --font-size-value: 1.25rem;   /* 20px — callout values, emphasis numbers */
+  --font-size-hero: 1.5rem;     /* 24px — the Heatmap screen's greeting, the single largest text in the app */
 
   --font-weight-heading: 500;
   --font-weight-body: 400;

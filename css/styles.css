@@ -276,7 +276,7 @@ button:focus-visible {
   padding: var(--space-md) var(--space-md) 0;
   color: var(--color-text);
   font-size: var(--font-size-hero);
-  font-weight: var(--font-weight-heading);
+  font-weight: var(--font-weight-bold);
 }
 
 .callouts {

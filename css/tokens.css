@@ -50,6 +50,7 @@
 
   --font-weight-heading: 500;
   --font-weight-body: 400;
+  --font-weight-bold: 700; /* the Heatmap screen's greeting only, so far — real bold, distinct from the medium weight everything else uses */
 }
 
 /* Light theme — a deliberate user toggle (Settings screen), not a
